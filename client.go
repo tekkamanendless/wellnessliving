@@ -57,7 +57,11 @@ func (c *Client) Raw(ctx context.Context, method string, path string) error {
 		return err
 	}
 
-	now := time.Now()
+	tz, err := time.LoadLocation("GMT")
+	if err != nil {
+		return err
+	}
+	now := time.Now().In(tz)
 
 	authorizationCode := c.AuthorizationCode
 	if authorizationCode == "" {
@@ -113,7 +117,7 @@ func signatureCompute(signature Signature) string {
 	var parts []string
 	parts = append(parts, "Core\\Request\\Api::20150518")
 
-	parts = append(parts, signature.Time.Format(time.RFC1123))
+	parts = append(parts, signature.Time.Format("2006-01-02 15:04:05"))
 	parts = append(parts, signature.AuthorizationCode)
 	parts = append(parts, signature.Host)
 	parts = append(parts, signature.AuthorizationID)
