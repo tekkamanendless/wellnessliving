@@ -56,6 +56,6 @@ func signatureCompute(signature Signature) string {
 	}
 
 	input := strings.Join(parts, "\n")
-	logrus.Debugf("INPUT: [\n%s\n]\n", input)
+	logrus.Debugf("signatureCompute: parts: [\n%s\n]", input)
 	return fmt.Sprintf("%x", sha256.Sum256([]byte(input)))
 }
