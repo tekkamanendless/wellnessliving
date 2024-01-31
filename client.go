@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/httputil"
 	"net/url"
 	"os"
 	"sort"
@@ -59,12 +60,12 @@ func (c *Client) Raw(ctx context.Context, method string, path string) error {
 	now := time.Now()
 
 	authorizationCode := c.AuthorizationCode
-	if authorizationCode != "" {
+	if authorizationCode == "" {
 		authorizationCode = os.Getenv("WELLNESSLIVING_AUTHORIZATION_CODE")
 	}
 	authorizationID := c.AuthorizationID
-	if authorizationID != "" {
-		authorizationID = os.Getenv("WELLNESSLIVING_AUTHORIZATION_CODE")
+	if authorizationID == "" {
+		authorizationID = os.Getenv("WELLNESSLIVING_AUTHORIZATION_ID")
 	}
 
 	signature := Signature{
@@ -76,14 +77,19 @@ func (c *Client) Raw(ctx context.Context, method string, path string) error {
 		CookieTransient:   "", // TODO
 		Host:              myURL.Host,
 		AuthorizationID:   authorizationID,
-		Method:            method,
-		Resource:          "", // TODO
+		Method:            strings.ToUpper(method),
+		Resource:          strings.TrimLeft(path, "/"),
 	}
 	authorization := computeAuthorizationHash(signature)
 
 	request.Header.Set("Date", now.Format(time.RFC1123))
 	request.Header.Set("User-Agent", "WellnessLiving SDK/1.1 (WellnessLiving SDK)")
 	request.Header.Set("Authorization", authorization)
+
+	{
+		contents, _ := httputil.DumpRequest(request, true)
+		fmt.Printf("REQUEST:\n%s\n", contents)
+	}
 
 	response, err := c.HTTPClient.Do(request)
 	if err != nil {
@@ -145,5 +151,7 @@ func signatureCompute(signature Signature) string {
 		}
 	}
 
-	return fmt.Sprintf("%x", sha256.Sum256([]byte(strings.Join(parts, "\n"))))
+	input := strings.Join(parts, "\n")
+	fmt.Printf("INPUT:\n%s\n", input)
+	return fmt.Sprintf("%x", sha256.Sum256([]byte(input)))
 }
