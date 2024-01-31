@@ -2,16 +2,16 @@ package wellnessliving
 
 import (
 	"context"
-	"crypto/sha256"
 	"fmt"
 	"io"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
 	"os"
-	"sort"
 	"strings"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 type Client struct {
@@ -23,7 +23,7 @@ type Client struct {
 
 type Signature struct {
 	Header            http.Header
-	Variable          url.Values
+	Variables         url.Values
 	Time              time.Time
 	AuthorizationCode string
 	CookiePersistent  string
@@ -34,7 +34,7 @@ type Signature struct {
 	Resource          string
 }
 
-func (c *Client) Raw(ctx context.Context, method string, path string) error {
+func (c *Client) Raw(ctx context.Context, method string, path string, variables url.Values) error {
 	baseURL := c.URL
 	if baseURL == "" {
 		baseURL = "https://us.wellnessliving.com"
@@ -43,6 +43,9 @@ func (c *Client) Raw(ctx context.Context, method string, path string) error {
 	targetURL := path
 	if !strings.Contains(targetURL, "://") {
 		targetURL = strings.TrimRight(baseURL, "/") + "/" + strings.TrimLeft(path, "/")
+	}
+	if len(variables) > 0 {
+		targetURL += "?" + variables.Encode()
 	}
 
 	myURL, err := url.Parse(targetURL)
@@ -62,6 +65,7 @@ func (c *Client) Raw(ctx context.Context, method string, path string) error {
 		return err
 	}
 	now := time.Now().In(tz)
+	//now, _ = time.ParseInLocation("2006-01-02 15:04:05", "2024-01-31 11:58:28", tz)
 
 	authorizationCode := c.AuthorizationCode
 	if authorizationCode == "" {
@@ -74,7 +78,7 @@ func (c *Client) Raw(ctx context.Context, method string, path string) error {
 
 	signature := Signature{
 		Header:            http.Header{},
-		Variable:          url.Values{},
+		Variables:         variables,
 		Time:              now,
 		AuthorizationCode: authorizationCode,
 		CookiePersistent:  "", // TODO
@@ -92,7 +96,7 @@ func (c *Client) Raw(ctx context.Context, method string, path string) error {
 
 	{
 		contents, _ := httputil.DumpRequest(request, true)
-		fmt.Printf("REQUEST:\n%s\n", contents)
+		logrus.WithContext(ctx).Debugf("REQUEST:\n%s\n", contents)
 	}
 
 	response, err := c.HTTPClient.Do(request)
@@ -100,62 +104,14 @@ func (c *Client) Raw(ctx context.Context, method string, path string) error {
 		return err
 	}
 
+	logrus.WithContext(ctx).Debugf("Status code: %d", response.StatusCode)
+
 	contents, err := io.ReadAll(response.Body)
 	if err != nil {
 		return err
 	}
-	fmt.Printf("RESPONSE:\n%s\n", contents)
+	logrus.WithContext(ctx).Debugf("Response:")
+	fmt.Printf("%s\n", contents)
 
 	return nil
-}
-
-func computeAuthorizationHash(signature Signature) string {
-	return "20150518," + signature.AuthorizationID + ",," + signatureCompute(signature)
-}
-
-func signatureCompute(signature Signature) string {
-	var parts []string
-	parts = append(parts, "Core\\Request\\Api::20150518")
-
-	parts = append(parts, signature.Time.Format("2006-01-02 15:04:05"))
-	parts = append(parts, signature.AuthorizationCode)
-	parts = append(parts, signature.Host)
-	parts = append(parts, signature.AuthorizationID)
-	parts = append(parts, signature.Method)
-	parts = append(parts, signature.Resource)
-	parts = append(parts, signature.CookiePersistent)
-	parts = append(parts, signature.CookieTransient)
-
-	// TODO: Maybe signature.Variable should be more abstract.
-	//$a_variable=WlModelRequest::signatureArray($a_data['a_variable'])
-	{
-		var keys []string
-		for key := range signature.Variable {
-			keys = append(keys, key)
-		}
-		sort.Strings(keys)
-
-		for _, key := range keys {
-			value := signature.Variable.Get(key)
-			// TODO: If the value is null, use "${key} is null"
-			parts = append(parts, key+"="+value)
-		}
-	}
-
-	{
-		var keys []string
-		for key := range signature.Header {
-			keys = append(keys, key)
-		}
-		sort.Strings(keys)
-
-		for _, key := range keys {
-			value := signature.Header.Get(key)
-			parts = append(parts, strings.ToLower(key)+":"+strings.TrimSpace(value))
-		}
-	}
-
-	input := strings.Join(parts, "\n")
-	fmt.Printf("INPUT:\n%s\n", input)
-	return fmt.Sprintf("%x", sha256.Sum256([]byte(input)))
 }
