@@ -13,6 +13,7 @@ import (
 	"time"
 
 	"github.com/sirupsen/logrus"
+	"github.com/tekkamanendless/httperror"
 )
 
 type Client struct {
@@ -86,6 +87,8 @@ func (c *Client) Raw(ctx context.Context, method string, path string, variables 
 		return nil, fmt.Errorf("wellnessliving: could not parse URL: %w", err)
 	}
 
+	method = strings.ToUpper(method)
+
 	var body io.Reader
 
 	request, err := http.NewRequest(method, targetURL, body)
@@ -98,7 +101,6 @@ func (c *Client) Raw(ctx context.Context, method string, path string, variables 
 		return nil, fmt.Errorf("wellnessliving: could not load timezone: %w", err)
 	}
 	now := time.Now().In(tz)
-	//now, _ = time.ParseInLocation("2006-01-02 15:04:05", "2024-01-31 11:58:28", tz)
 
 	authorizationCode := c.AuthorizationCode
 	if authorizationCode == "" {
@@ -123,6 +125,7 @@ func (c *Client) Raw(ctx context.Context, method string, path string, variables 
 	}
 	authorization := computeAuthorizationHash(signature)
 
+	request.Header.Set("Accept", "*/*")
 	request.Header.Set("Date", now.Format(time.RFC1123))
 	request.Header.Set("User-Agent", "WellnessLiving SDK/1.1 (WellnessLiving SDK)")
 	request.Header.Set("Authorization", authorization)
@@ -138,6 +141,9 @@ func (c *Client) Raw(ctx context.Context, method string, path string, variables 
 	}
 
 	logrus.WithContext(ctx).Debugf("Status code: %d", response.StatusCode)
+	if response.StatusCode >= 400 {
+		return nil, httperror.ErrorFromStatus(response.StatusCode)
+	}
 
 	contents, err := io.ReadAll(response.Body)
 	if err != nil {

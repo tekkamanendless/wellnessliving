@@ -3,42 +3,71 @@ package main
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"net/url"
 	"os"
+	"strings"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
 	"github.com/tekkamanendless/wellnessliving"
 )
 
 func main() {
 	ctx := context.Background()
 
-	logrus.SetLevel(logrus.DebugLevel)
-
-	businessID := os.Getenv("BUSINESS_ID")
-
 	client := wellnessliving.Client{}
 
-	logrus.WithContext(ctx).Debugf("Events:\n")
-	values := url.Values{}
-	values.Set("id_flag", "3")
-	values.Set("is_ignore_requirement", "")
-	values.Set("is_tab_all", "1")
-	values.Set("k_business", businessID)
-	values.Set("text_search", "")
-
-	contents, err := client.Raw(ctx, http.MethodGet, "/Wl/Event/EventList.json", values)
-	if err != nil {
-		logrus.WithContext(ctx).Errorf("Error: [%T] %v\n", err, err)
+	var verbose bool
+	rootCommand := &cobra.Command{
+		Use: "wellnessliving",
+		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+			if verbose {
+				logrus.SetLevel(logrus.DebugLevel)
+			}
+		},
 	}
-	fmt.Printf("%s\n", contents)
+	rootCommand.PersistentFlags().BoolVar(&verbose, "verbose", false, "Enable verbose logging.")
 
-	var eventListResponse wellnessliving.EventListResponse
-	err = client.Request(ctx, http.MethodGet, "/Wl/Event/EventList.json", values, &eventListResponse)
-	if err != nil {
-		logrus.WithContext(ctx).Errorf("Error: [%T] %v\n", err, err)
+	{
+		cmd := &cobra.Command{
+			Use:  "raw <method> <path> [key=value [...]]",
+			Args: cobra.MinimumNArgs(2),
+			Run: func(cmd *cobra.Command, args []string) {
+				method := args[0]
+				path := args[1]
+				values := url.Values{}
+				for _, v := range args[2:] {
+					if !strings.Contains(v, "=") {
+						logrus.WithContext(ctx).Errorf("Invalid syntax for variable %q; expected '='.", v)
+						os.Exit(1)
+					}
+					parts := strings.SplitN(v, "=", 2)
+					values.Set(parts[0], parts[1])
+				}
+
+				contents, err := client.Raw(ctx, method, path, values)
+				if err != nil {
+					logrus.WithContext(ctx).Errorf("Could not perform request: [%T] %v", err, err)
+					os.Exit(1)
+				}
+				fmt.Printf("%s\n", contents)
+			},
+		}
+		rootCommand.AddCommand(cmd)
 	}
-	spew.Dump(eventListResponse)
+
+	err := rootCommand.Execute()
+	if err != nil {
+		logrus.WithContext(ctx).Errorf("Error: [%T] %v", err, err)
+		os.Exit(1)
+	}
+
+	/*
+		var eventListResponse wellnessliving.EventListResponse
+		err = client.Request(ctx, http.MethodGet, "/Wl/Event/EventList.json", values, &eventListResponse)
+		if err != nil {
+			logrus.WithContext(ctx).Errorf("Error: [%T] %v\n", err, err)
+		}
+		spew.Dump(eventListResponse)
+	*/
 }
