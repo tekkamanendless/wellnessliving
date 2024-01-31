@@ -2,10 +2,12 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/url"
 	"os"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/sirupsen/logrus"
 	"github.com/tekkamanendless/wellnessliving"
 )
@@ -27,8 +29,16 @@ func main() {
 	values.Set("k_business", businessID)
 	values.Set("text_search", "")
 
-	err := client.Raw(ctx, http.MethodGet, "/Wl/Event/EventList.json", values)
+	contents, err := client.Raw(ctx, http.MethodGet, "/Wl/Event/EventList.json", values)
 	if err != nil {
 		logrus.WithContext(ctx).Errorf("Error: [%T] %v\n", err, err)
 	}
+	fmt.Printf("%s\n", contents)
+
+	var eventListResponse wellnessliving.EventListResponse
+	err = client.Request(ctx, http.MethodGet, "/Wl/Event/EventList.json", values, &eventListResponse)
+	if err != nil {
+		logrus.WithContext(ctx).Errorf("Error: [%T] %v\n", err, err)
+	}
+	spew.Dump(eventListResponse)
 }

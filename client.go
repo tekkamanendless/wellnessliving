@@ -2,6 +2,7 @@ package wellnessliving
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -34,7 +35,39 @@ type Signature struct {
 	Resource          string
 }
 
-func (c *Client) Raw(ctx context.Context, method string, path string, variables url.Values) error {
+func (c *Client) Request(ctx context.Context, method string, path string, variables url.Values, output interface{}) error {
+	contents, err := c.Raw(ctx, method, path, variables)
+	if err != nil {
+		return err
+	}
+
+	var baseResponse BaseResponse
+	err = json.Unmarshal(contents, &baseResponse)
+	if err != nil {
+		return fmt.Errorf("wellnessliving: could not parse response envelope: %w", err)
+	}
+
+	logrus.WithContext(ctx).Debugf("Envelope: %+v", baseResponse)
+	if baseResponse.Status != "ok" {
+		var errorResponse ErrorResponse
+		err = json.Unmarshal(contents, &errorResponse)
+		if err != nil {
+			return fmt.Errorf("wellnessliving: could not parse error response: %w", err)
+		}
+		return &errorResponse
+	}
+
+	if output != nil {
+		err = json.Unmarshal(contents, output)
+		if err != nil {
+			return fmt.Errorf("wellnessliving: could not parse response: %w", err)
+		}
+	}
+
+	return nil
+}
+
+func (c *Client) Raw(ctx context.Context, method string, path string, variables url.Values) ([]byte, error) {
 	baseURL := c.URL
 	if baseURL == "" {
 		baseURL = "https://us.wellnessliving.com"
@@ -50,19 +83,19 @@ func (c *Client) Raw(ctx context.Context, method string, path string, variables 
 
 	myURL, err := url.Parse(targetURL)
 	if err != nil {
-		return err
+		return nil, fmt.Errorf("wellnessliving: could not parse URL: %w", err)
 	}
 
 	var body io.Reader
 
 	request, err := http.NewRequest(method, targetURL, body)
 	if err != nil {
-		return err
+		return nil, fmt.Errorf("wellnessliving: could not create request: %w", err)
 	}
 
 	tz, err := time.LoadLocation("GMT")
 	if err != nil {
-		return err
+		return nil, fmt.Errorf("wellnessliving: could not load timezone: %w", err)
 	}
 	now := time.Now().In(tz)
 	//now, _ = time.ParseInLocation("2006-01-02 15:04:05", "2024-01-31 11:58:28", tz)
@@ -101,17 +134,17 @@ func (c *Client) Raw(ctx context.Context, method string, path string, variables 
 
 	response, err := c.HTTPClient.Do(request)
 	if err != nil {
-		return err
+		return nil, fmt.Errorf("wellnessliving: could not perform request: %w", err)
 	}
 
 	logrus.WithContext(ctx).Debugf("Status code: %d", response.StatusCode)
 
 	contents, err := io.ReadAll(response.Body)
 	if err != nil {
-		return err
+		return nil, fmt.Errorf("wellnessliving: could not read response body: %w", err)
 	}
 	logrus.WithContext(ctx).Debugf("Response:")
-	fmt.Printf("%s\n", contents)
+	logrus.WithContext(ctx).Debugf("%s", contents)
 
-	return nil
+	return contents, nil
 }
