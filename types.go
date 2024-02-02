@@ -3,9 +3,74 @@ package wellnessliving
 import (
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"time"
 )
 
 type StringMap map[string]string
+
+type Date struct {
+	time.Time
+}
+
+func (d *Date) UnmarshalJSON(contents []byte) error {
+	var v string
+	err := json.Unmarshal(contents, &v)
+	if err != nil {
+		return err
+	}
+
+	location, err := time.LoadLocation("GMT")
+	if err != nil {
+		return err
+	}
+
+	d.Time, err = time.ParseInLocation("2006-01-02", v, location)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type DateTime struct {
+	time.Time
+}
+
+func (d *DateTime) UnmarshalJSON(contents []byte) error {
+	var v string
+	err := json.Unmarshal(contents, &v)
+	if err != nil {
+		return err
+	}
+
+	location, err := time.LoadLocation("GMT")
+	if err != nil {
+		return err
+	}
+
+	d.Time, err = time.ParseInLocation("2006-01-02 15:04:05", v, location)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type Currency float64
+
+func (d *Currency) UnmarshalJSON(contents []byte) error {
+	var v string
+	err := json.Unmarshal(contents, &v)
+	if err != nil {
+		return err
+	}
+
+	f, err := strconv.ParseFloat(v, 64)
+	if err != nil {
+		return err
+	}
+	*d = Currency(f)
+	return nil
+}
 
 func (m *StringMap) UnmarshalJSON(contents []byte) error {
 	if string(contents) == "[]" {
@@ -61,35 +126,35 @@ type Event struct {
 	//TODO:"a_search_tag": [],
 	CanCancel bool `json:"can_cancel"`
 	// TODO: "dl_early": null,
-	EndDate           string  `json:"dl_end"`      // YYYY-MM-DD
-	StartDate         string  `json:"dl_start"`    // YYYY-MM-DD
-	SessionDTU        string  `json:"dtu_session"` // 2024-02-04 00:00:00
-	SessionAll        int     `json:"i_session_all"`
-	SessionFuture     int     `json:"i_session_future"`
-	SessionPast       int     `json:"i_session_past"`
-	IsAgeRestrict     bool    `json:"is_age_restrict"`
-	IsAvailable       bool    `json:"is_available"`
-	IsBlock           bool    `json:"is_block"`
-	IsBookable        bool    `json:"is_bookable"`
-	IsBooked          bool    `json:"is_booked"`
-	IsClosed          bool    `json:"is_closed"`
-	IsFull            bool    `json:"is_full"`
-	IsOnline          bool    `json:"is_online"`
-	IsOnlinePrivate   bool    `json:"is_online_private"`
-	IsOpen            bool    `json:"is_open"`
-	IsPromotionOnly   bool    `json:"is_promotion_only"`
-	IsProrate         bool    `json:"is_prorate"`
-	IsVirtual         bool    `json:"is_virtual"`
-	ClassID           string  `json:"k_class"`
-	ClassPeriodID     string  `json:"k_class_period"`
-	EnrollmentBlockID string  `json:"k_enrollment_block"`
-	LocationID        string  `json:"k_location"`
-	PriceTotal        string  `json:"m_price_total"`       // 0.00
-	PriceTotalEarly   *string `json:"m_price_total_early"` // 0.00
-	AgeRestrictText   string  `json:"text_age_restrict"`
-	Title             string  `json:"text_title"`
-	URLBook           string  `json:"url_book"`
-	XMLDescription    string  `json:"xml_description"`
+	EndDate           Date      `json:"dl_end"`      // YYYY-MM-DD
+	StartDate         Date      `json:"dl_start"`    // YYYY-MM-DD
+	SessionDTU        DateTime  `json:"dtu_session"` // 2024-02-04 00:00:00
+	SessionAll        int       `json:"i_session_all"`
+	SessionFuture     int       `json:"i_session_future"`
+	SessionPast       int       `json:"i_session_past"`
+	IsAgeRestrict     bool      `json:"is_age_restrict"`
+	IsAvailable       bool      `json:"is_available"`
+	IsBlock           bool      `json:"is_block"`
+	IsBookable        bool      `json:"is_bookable"`
+	IsBooked          bool      `json:"is_booked"`
+	IsClosed          bool      `json:"is_closed"`
+	IsFull            bool      `json:"is_full"`
+	IsOnline          bool      `json:"is_online"`
+	IsOnlinePrivate   bool      `json:"is_online_private"`
+	IsOpen            bool      `json:"is_open"`
+	IsPromotionOnly   bool      `json:"is_promotion_only"`
+	IsProrate         bool      `json:"is_prorate"`
+	IsVirtual         bool      `json:"is_virtual"`
+	ClassID           string    `json:"k_class"`
+	ClassPeriodID     string    `json:"k_class_period"`
+	EnrollmentBlockID string    `json:"k_enrollment_block"`
+	LocationID        string    `json:"k_location"`
+	PriceTotal        Currency  `json:"m_price_total"`       // 0.00
+	PriceTotalEarly   *Currency `json:"m_price_total_early"` // 0.00
+	AgeRestrictText   string    `json:"text_age_restrict"`
+	Title             string    `json:"text_title"`
+	URLBook           string    `json:"url_book"`
+	XMLDescription    string    `json:"xml_description"`
 }
 
 type Logo struct {
@@ -126,8 +191,8 @@ type Image struct {
 type Schedule struct {
 	Day           map[string]int `json:"a_day"`
 	StaffMember   []StaffMember  `json:"a_staff_member"`
-	EndDate       string         `json:"dl_end"`   // YYYY-MM-DD
-	StartDate     string         `json:"dl_start"` // YYYY-MM-DD
+	EndDate       Date           `json:"dl_end"`   // YYYY-MM-DD
+	StartDate     Date           `json:"dl_start"` // YYYY-MM-DD
 	IsDay         bool           `json:"is_day"`
 	ClassPeriodID string         `json:"k_class_period"`
 	LocationID    string         `json:"k_location"`
