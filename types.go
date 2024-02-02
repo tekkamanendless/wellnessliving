@@ -1,6 +1,25 @@
 package wellnessliving
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+)
+
+type StringMap map[string]string
+
+func (m *StringMap) UnmarshalJSON(contents []byte) error {
+	if string(contents) == "[]" {
+		*m = map[string]string{}
+	} else {
+		v := map[string]string{}
+		err := json.Unmarshal(contents, &v)
+		if err != nil {
+			return err
+		}
+		*m = v
+	}
+	return nil
+}
 
 type BaseResponse struct {
 	Status  string `json:"status"`
@@ -31,8 +50,8 @@ func (r *ErrorResponse) Error() string {
 type EventListResponse struct {
 	BaseResponse
 
-	EnrollmentBlockList map[string]string `json:"a_enrollment_block_list"`
-	EventList           []Event           `json:"a_event_list"`
+	EnrollmentBlockList StringMap `json:"a_enrollment_block_list"`
+	EventList           []Event   `json:"a_event_list"`
 }
 
 type Event struct {
@@ -42,8 +61,8 @@ type Event struct {
 	//TODO:"a_search_tag": [],
 	CanCancel bool `json:"can_cancel"`
 	// TODO: "dl_early": null,
-	StartDate         string  `json:"dl_end"`      // YYYY-MM-DD
-	EndDate           string  `json:"dl_start"`    // YYYY-MM-DD
+	EndDate           string  `json:"dl_end"`      // YYYY-MM-DD
+	StartDate         string  `json:"dl_start"`    // YYYY-MM-DD
 	SessionDTU        string  `json:"dtu_session"` // 2024-02-04 00:00:00
 	SessionAll        int     `json:"i_session_all"`
 	SessionFuture     int     `json:"i_session_future"`
