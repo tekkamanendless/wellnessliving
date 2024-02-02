@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// Date is a specific date.
 type Date struct {
 	time.Time
 }
@@ -29,6 +30,7 @@ func (d *Date) UnmarshalJSON(contents []byte) error {
 	return nil
 }
 
+// DateTime is a specific date/time.
 type DateTime struct {
 	time.Time
 }
@@ -52,6 +54,7 @@ func (d *DateTime) UnmarshalJSON(contents []byte) error {
 	return nil
 }
 
+// Currency is an amount of money.
 type Currency float64
 
 func (d *Currency) UnmarshalJSON(contents []byte) error {

@@ -4,11 +4,14 @@ import (
 	"fmt"
 )
 
+// BaseResponse is the base of all responses.
+// The fields here will be present in every response.
 type BaseResponse struct {
 	Status  string `json:"status"`
 	Version string `json:"version"`
 }
 
+// ErrorResponse is an error response.
 type ErrorResponse struct {
 	BaseResponse
 
@@ -30,6 +33,7 @@ func (r *ErrorResponse) Error() string {
 	return fmt.Sprintf("%+v", *r)
 }
 
+// EventListResponse is the response from "/Wl/Event/EventList.json".
 type EventListResponse struct {
 	BaseResponse
 
@@ -44,9 +48,9 @@ type Event struct {
 	//TODO:"a_search_tag": [],
 	CanCancel bool `json:"can_cancel"`
 	// TODO: "dl_early": null,
-	EndDate           Date      `json:"dl_end"`      // YYYY-MM-DD
-	StartDate         Date      `json:"dl_start"`    // YYYY-MM-DD
-	SessionDTU        DateTime  `json:"dtu_session"` // 2024-02-04 00:00:00
+	EndDate           Date      `json:"dl_end"`
+	StartDate         Date      `json:"dl_start"`
+	SessionDTU        DateTime  `json:"dtu_session"`
 	SessionAll        int       `json:"i_session_all"`
 	SessionFuture     int       `json:"i_session_future"`
 	SessionPast       int       `json:"i_session_past"`
@@ -67,8 +71,8 @@ type Event struct {
 	ClassPeriodID     string    `json:"k_class_period"`
 	EnrollmentBlockID string    `json:"k_enrollment_block"`
 	LocationID        string    `json:"k_location"`
-	PriceTotal        Currency  `json:"m_price_total"`       // 0.00
-	PriceTotalEarly   *Currency `json:"m_price_total_early"` // 0.00
+	PriceTotal        Currency  `json:"m_price_total"`
+	PriceTotalEarly   *Currency `json:"m_price_total_early"`
 	AgeRestrictText   string    `json:"text_age_restrict"`
 	Title             string    `json:"text_title"`
 	URLBook           string    `json:"url_book"`
@@ -109,8 +113,8 @@ type Image struct {
 type Schedule struct {
 	Day           map[string]int `json:"a_day"`
 	StaffMember   []StaffMember  `json:"a_staff_member"`
-	EndDate       Date           `json:"dl_end"`   // YYYY-MM-DD
-	StartDate     Date           `json:"dl_start"` // YYYY-MM-DD
+	EndDate       Date           `json:"dl_end"`
+	StartDate     Date           `json:"dl_start"`
 	IsDay         bool           `json:"is_day"`
 	ClassPeriodID string         `json:"k_class_period"`
 	LocationID    string         `json:"k_location"`
