@@ -186,3 +186,33 @@ type ClassSchedule struct {
 	TextTimeRange     string   `json:"text_time_range"` // 7:00pm - 9:00pm
 	TextTimeStart     string   `json:"text_time_start"` // 7:00pm
 }
+
+// ScheduleClassListResponse is the response from "/Wl/Schedule/ClassList/ClassList.json".
+type ScheduleClassListResponse struct {
+	BaseResponse
+
+	Calendar            map[string][]interface{} `json:"a_calendar"`
+	Sessions            []ScheduleClassSession   `json:"a_session"`
+	IsTimezoneDifferent bool                     `json:"is_timezone_different"`
+	IsVirtualService    bool                     `json:"is_virtual_service"`
+}
+
+type ScheduleClassSession struct {
+	StartTime         DateTime `json:"dt_date"`  // This is in UTC.
+	TimeString        string   `json:"dt_time"`  // "19:15:00"
+	LocalStartTime    DateTime `json:"dtl_date"` // "2024-02-23 19:15:00"
+	DayOfWeek         int      `json:"i_day"`
+	DurationInMinutes int      `json:"i_duration"`
+	IsCancel          Integer  `json:"is_cancel"` // "0"
+	ClassID           string   `json:"k_class"`
+	ClassPeriodID     string   `json:"k_class_period"`
+	LocationID        string   `json:"k_location"`
+	Title             string   `json:"s_title"`
+	Timezone          string   `json:"text_timezone"` // "EDT"
+	URLBook           string   `json:"url_book"`
+	Staff             []string `json:"a_staff"`
+	// TODO: "a_virtual_location": []
+	HideApplication bool `json:"hide_application"`
+	IsVirtual       bool `json:"is_virtual"`
+	// TODO: "a_class_tab": [null]
+}
