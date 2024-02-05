@@ -2,6 +2,7 @@ package wellnessliving
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 	"time"
 )
@@ -70,4 +71,31 @@ func (d *Currency) UnmarshalJSON(contents []byte) error {
 	}
 	*d = Currency(f)
 	return nil
+}
+
+// Integer is an integer, which could be represented as an integer or a string string.
+type Integer int
+
+func (d *Integer) UnmarshalJSON(contents []byte) error {
+	{
+		var v int
+		err := json.Unmarshal(contents, &v)
+		if err == nil {
+			*d = Integer(v)
+			return nil
+		}
+	}
+	{
+		var v string
+		err := json.Unmarshal(contents, &v)
+		if err == nil {
+			f, err := strconv.ParseInt(v, 10, 64)
+			if err != nil {
+				return err
+			}
+			*d = Integer(f)
+			return nil
+		}
+	}
+	return fmt.Errorf("could not parse Integer from: %s", contents)
 }

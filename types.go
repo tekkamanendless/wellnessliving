@@ -8,7 +8,7 @@ import (
 // The fields here will be present in every response.
 type BaseResponse struct {
 	Status  string `json:"status"`
-	Version string `json:"version"`
+	Version string `json:"s_version"`
 }
 
 // ErrorResponse is an error response.
@@ -42,9 +42,9 @@ type EventListResponse struct {
 }
 
 type Event struct {
-	ClassTab []string   `json:"a_class_tab"`
-	Logo     Logo       `json:"a_logo"`
-	Schedule []Schedule `json:"a_schedule"`
+	ClassTab []string        `json:"a_class_tab"`
+	Logo     Logo            `json:"a_logo"`
+	Schedule []EventSchedule `json:"a_schedule"`
 	//TODO:"a_search_tag": [],
 	CanCancel         bool      `json:"can_cancel"`
 	EarlybirdEndDate  *Date     `json:"dl_early"`
@@ -110,7 +110,7 @@ type Image struct {
 	URLThumbnail string `json:"url-thumbnail"`
 }
 
-type Schedule struct {
+type EventSchedule struct {
 	Day           map[string]int `json:"a_day"`
 	StaffMember   []StaffMember  `json:"a_staff_member"`
 	EndDate       Date           `json:"dl_end"`
@@ -130,4 +130,59 @@ type StaffMember struct {
 	NameFull      string `json:"text_name_full"`
 	NameLast      string `json:"text_name_last"`
 	UID           string `json:"uid"`
+}
+
+// ClassResponse is the response from "/Wl/Classes/ClassView/Element.json".
+type ClassResponse struct {
+	BaseResponse
+
+	ClassList map[string]Class `json:"a_class_list"`
+}
+
+type Class struct {
+	ClassTab []string `json:"a_class_tab"`
+	// TODO: "a_config": null,
+	Schedule []ClassSchedule `json:"a_schedule"`
+	// TODO: "a_search_tag": [],
+	// TODO: "a_visits_required": [],
+	HasOwnImage            bool    `json:"has_own_image"`
+	HTMLDescription        string  `json:"html_description"`
+	HTMLSpecialInstruction string  `json:"html_special_instruction"`
+	IsAgePublic            Integer `json:"is_age_public"` // "0"
+	// TODO: "i_age_from": null,
+	// TODO: "i_age_to": null,
+	IsBookable              bool      `json:"is_bookable"`
+	IsEvent                 bool      `json:"is_event"`
+	IsOnlinePrivate         bool      `json:"is_online_private"`
+	IsPromotionClient       bool      `json:"is_promotion_client"`
+	IsPromotionOnly         bool      `json:"is_promotion_only"`
+	IsPromotionStaff        bool      `json:"is_promotion_staff"`
+	IsSingleBuy             bool      `json:"is_single_buy"`
+	IsVirtual               bool      `json:"is_virtual"`
+	ClassID                 string    `json:"k_class"`
+	Price                   *Currency `json:"m_price"`
+	ShowSpecialInstructions Integer   `json:"show_special_instructions"` // "1"
+	Title                   string    `json:"text_title"`
+	XMLDescription          string    `json:"xml_description"`
+	XMLSpecialInstruction   string    `json:"xml_special_instruction"`
+	URLImage                string    `json:"url_image"`
+}
+
+type ClassSchedule struct {
+	Repeat struct {
+		RepeatAmount   Integer `json:"i_repeat"`  // "2" (for every 2)
+		RepeatInterval int     `json:"id_repeat"` // 7 (for weeks)
+	} `json:"a_repeat"`
+	StaffIDs          []int    `json:"a_staff_key"`
+	EndDate           Date     `json:"dl_end"`
+	StartDate         Date     `json:"dl_start"`
+	DayOfWeek         int      `json:"i_day"` // 1 is Monday; 7 is Sunday.
+	DurationInMinutes int      `json:"i_duration"`
+	IsCancel          bool     `json:"is_cancel"`
+	ClassID           string   `json:"k_class"`
+	ClassPeriodID     string   `json:"k_class_period"`
+	LocationID        string   `json:"k_location"`
+	Price             Currency `json:"m_price"`
+	TextTimeRange     string   `json:"text_time_range"` // 7:00pm - 9:00pm
+	TextTimeStart     string   `json:"text_time_start"` // 7:00pm
 }
