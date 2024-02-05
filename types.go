@@ -46,8 +46,8 @@ type Event struct {
 	Logo     Logo       `json:"a_logo"`
 	Schedule []Schedule `json:"a_schedule"`
 	//TODO:"a_search_tag": [],
-	CanCancel bool `json:"can_cancel"`
-	// TODO: "dl_early": null,
+	CanCancel         bool      `json:"can_cancel"`
+	EarlybirdEndDate  *Date     `json:"dl_early"`
 	EndDate           Date      `json:"dl_end"`
 	StartDate         Date      `json:"dl_start"`
 	SessionDTU        DateTime  `json:"dtu_session"`
