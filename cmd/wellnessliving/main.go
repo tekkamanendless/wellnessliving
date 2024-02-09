@@ -85,6 +85,38 @@ func main() {
 		rootCommand.AddCommand(cmd)
 	}
 
+	{
+		cmd := &cobra.Command{
+			Use:  "list-tabs [key=value [...]]",
+			Args: cobra.MinimumNArgs(0),
+			Run: func(cmd *cobra.Command, args []string) {
+				values := url.Values{}
+				for _, v := range args {
+					if !strings.Contains(v, "=") {
+						logrus.WithContext(ctx).Errorf("Invalid syntax for variable %q; expected '='.", v)
+						os.Exit(1)
+					}
+					parts := strings.SplitN(v, "=", 2)
+					values.Set(parts[0], parts[1])
+				}
+
+				var tabResponse wellnessliving.TabResponse
+				err := client.Request(ctx, http.MethodGet, "/Wl/Schedule/Tab/Tab.json", values, &tabResponse)
+				if err != nil {
+					logrus.WithContext(ctx).Errorf("Could not perform request: [%T] %v", err, err)
+					os.Exit(1)
+				}
+				for _, tab := range tabResponse.Tabs {
+					fmt.Printf("id=%d %s\n", tab.ID, tab.Title)
+					if tab.ClassTabID != nil {
+						fmt.Printf("   class-tab-id=%d\n", *tab.ClassTabID)
+					}
+				}
+			},
+		}
+		rootCommand.AddCommand(cmd)
+	}
+
 	err := rootCommand.Execute()
 	if err != nil {
 		logrus.WithContext(ctx).Errorf("Error: [%T] %v", err, err)

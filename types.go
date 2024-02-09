@@ -216,3 +216,21 @@ type ScheduleClassSession struct {
 	IsVirtual       bool `json:"is_virtual"`
 	// TODO: "a_class_tab": [null]
 }
+
+type TabResponse struct {
+	BaseResponse
+
+	Tabs []Tab `json:"a_tab"`
+}
+
+type Tab struct {
+	IDClassTabObject  int      `json:"id_class_tab_object"`
+	IDClassTabSystem  int      `json:"id_class_tab_system"`
+	ClassTabID        *Integer `json:"k_class_tab"`
+	ResourceTypeID    *Integer `json:"k_resource_type"`
+	ServiceCategoryID *Integer `json:"k_service_category"`
+	Title             string   `json:"s_title"`
+	ID                int      `json:"k_id"`
+	Order             int      `json:"i_order"`
+	URLOrigin         string   `json:"url_origin"`
+}
