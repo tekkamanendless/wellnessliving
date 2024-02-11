@@ -37,8 +37,8 @@ func (r *ErrorResponse) Error() string {
 type EventListResponse struct {
 	BaseResponse
 
-	EnrollmentBlockList StringMap `json:"a_enrollment_block_list"`
-	EventList           []Event   `json:"a_event_list"`
+	EnrollmentBlockList StringToStringMap `json:"a_enrollment_block_list"`
+	EventList           []Event           `json:"a_event_list"`
 }
 
 type SearchTag struct {
@@ -196,10 +196,10 @@ type ClassSchedule struct {
 type ScheduleClassListResponse struct {
 	BaseResponse
 
-	Calendar            map[string][]interface{} `json:"a_calendar"`
-	Sessions            []ScheduleClassSession   `json:"a_session"`
-	IsTimezoneDifferent bool                     `json:"is_timezone_different"`
-	IsVirtualService    bool                     `json:"is_virtual_service"`
+	Calendar            StringToAnyMap         `json:"a_calendar"`
+	Sessions            []ScheduleClassSession `json:"a_session"`
+	IsTimezoneDifferent bool                   `json:"is_timezone_different"`
+	IsVirtualService    bool                   `json:"is_virtual_service"`
 }
 
 type ScheduleClassSession struct {
@@ -238,4 +238,28 @@ type Tab struct {
 	ID                int      `json:"k_id"`
 	Order             int      `json:"i_order"`
 	URLOrigin         string   `json:"url_origin"`
+}
+
+type LocationListResponse struct {
+	BaseResponse
+
+	LocationMap map[string]struct {
+		Latitude       Float   `json:"f_latitude"`
+		Longitude      Float   `json:"f_longitude"`
+		Order          Integer `json:"i_order"`
+		BusinessID     string  `json:"k_business"`
+		CountryID      string  `json:"k_country"`
+		LocationID     string  `json:"k_location"`
+		TimezoneID     string  `json:"k_timezone"`
+		RegionID       string  `json:"k_region"`
+		URLLogo        string  `json:"url_logo"`
+		Shift          Integer `json:"i_shift"`
+		Title          string  `json:"s_title"`
+		FullAddress    string  `json:"text_address"`
+		AddressStreet  string  `json:"text_address_individual"`
+		AddressCity    string  `json:"text_city"`
+		AddressCountry string  `json:"text_country"`
+		AddressPostal  string  `json:"text_postal"` // Zip code in the US.
+		AddressRegion  string  `json:"text_region"` // State in the US.
+	} `json:"a_location"`
 }

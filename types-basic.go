@@ -73,6 +73,24 @@ func (d *Currency) UnmarshalJSON(contents []byte) error {
 	return nil
 }
 
+// Float is an amount of money.
+type Float float64
+
+func (d *Float) UnmarshalJSON(contents []byte) error {
+	var v string
+	err := json.Unmarshal(contents, &v)
+	if err != nil {
+		return err
+	}
+
+	f, err := strconv.ParseFloat(v, 64)
+	if err != nil {
+		return err
+	}
+	*d = Float(f)
+	return nil
+}
+
 // Integer is an integer, which could be represented as an integer or a string string.
 type Integer int
 

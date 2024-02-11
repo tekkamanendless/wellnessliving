@@ -87,6 +87,35 @@ func main() {
 
 	{
 		cmd := &cobra.Command{
+			Use:  "list-locations [key=value [...]]",
+			Args: cobra.MinimumNArgs(0),
+			Run: func(cmd *cobra.Command, args []string) {
+				values := url.Values{}
+				for _, v := range args {
+					if !strings.Contains(v, "=") {
+						logrus.WithContext(ctx).Errorf("Invalid syntax for variable %q; expected '='.", v)
+						os.Exit(1)
+					}
+					parts := strings.SplitN(v, "=", 2)
+					values.Set(parts[0], parts[1])
+				}
+
+				var locationListResponse wellnessliving.LocationListResponse
+				err := client.Request(ctx, http.MethodGet, "/Wl/Location/List.json", values, &locationListResponse)
+				if err != nil {
+					logrus.WithContext(ctx).Errorf("Could not perform request: [%T] %v", err, err)
+					os.Exit(1)
+				}
+				for _, location := range locationListResponse.LocationMap {
+					fmt.Printf("id=%s %s\n", location.LocationID, location.Title)
+				}
+			},
+		}
+		rootCommand.AddCommand(cmd)
+	}
+
+	{
+		cmd := &cobra.Command{
 			Use:  "list-tabs [key=value [...]]",
 			Args: cobra.MinimumNArgs(0),
 			Run: func(cmd *cobra.Command, args []string) {
