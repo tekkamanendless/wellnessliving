@@ -265,3 +265,106 @@ type Location struct {
 	AddressPostal  string  `json:"text_postal"` // Zip code in the US.
 	AddressRegion  string  `json:"text_region"` // State in the US.
 }
+
+type LocationResponse struct {
+	BaseResponse
+
+	// TODO: "a_age": [],
+	// TODO: "a_amenities": [],
+	// TODO: "a_level": [],
+	// TODO: "a_logo": {
+	/*
+	    "is_empty": false,
+	    "k_business": "6470",
+	    "k_location": "6627",
+	    "a_image": {
+	      "i_height": 100,
+	      "i_height_src": 465,
+	      "i_rotate": 0,
+	      "i_width": 220,
+	      "i_width_src": 1022,
+	      "id_type_src": 3,
+	      "is-resize": true,
+	      "url-view": (string),
+	      "url-thumbnail": (string).
+	    },
+	    "i_height": 100,
+	    "i_width": 220,
+	    "s_url": (string)
+	  },
+	*/
+	Slides []struct {
+		Height     Integer `json:"i_height"`
+		Width      Integer `json:"i_width"`
+		URLPreview string  `json:"url_preview"`
+		URLSlide   string  `json:"url_slide"`
+	} `json:"a_slide"`
+	// TODO: "a_work": {
+	/*
+	    "1": [
+	      {
+	        "s_end": "18:00:00",
+	        "s_start": "09:00:00"
+	      }
+	    ],
+	    "2": [
+	      {
+	        "s_end": "18:00:00",
+	        "s_start": "09:00:00"
+	      }
+	    ],
+	    "3": [
+	      {
+	        "s_end": "18:00:00",
+	        "s_start": "09:00:00"
+	      }
+	    ],
+	    "4": [
+	      {
+	        "s_end": "18:00:00",
+	        "s_start": "09:00:00"
+	      }
+	    ],
+	    "5": [
+	      {
+	        "s_end": "18:00:00",
+	        "s_start": "09:00:00"
+	      }
+	    ]
+	  },
+	*/
+	Latitude               Float   `json:"f_latitude"`
+	Longitude              Float   `json:"f_longitude"`
+	HTMLDescriptionFull    string  `json:"html_description_full"`
+	HTMLDescriptionPreview string  `json:"html_description_preview"`
+	IndustryID             Integer `json:"id_industry"`
+	IsPhone                bool    `json:"is_phone"`
+	IsTopChoice            bool    `json:"is_top_choice"`
+	BusinessID             string  `json:"k_business"`
+	BusinessTypeID         string  `json:"k_business_type"`
+	TimezoneID             string  `json:"k_timezone"`
+	Address                string  `json:"s_address"`
+	Map                    string  `json:"s_map"`
+	PhoneNumber            string  `json:"s_phone"`
+	Timezone               string  `json:"s_timezone"` // PHP timezone identifier.
+	Title                  string  `json:"s_title"`
+	AddressStreet          string  `json:"text_address_individual"`
+	Alias                  string  `json:"text_alias"`
+	BusinessType           string  `json:"text_business_type"`
+	AddressCity            string  `json:"text_city"`
+	AddressCountry         string  `json:"text_country"`
+	Industry               string  `json:"text_industry"`
+	EmailAddress           string  `json:"text_mail"`
+	AddressPostal          string  `json:"text_postal"`      // Zip code in the US.
+	AddressRegion          string  `json:"text_region"`      // State in the US.
+	AddressRegionCode      string  `json:"text_region_code"` // State abbreviaion in the US.
+	URLFacebook            string  `json:"url_facebook"`
+	URLInstagram           string  `json:"url_instagram"`
+	URLLinkedIn            string  `json:"url_linkedin"`
+	URLMap                 string  `json:"url_map"`
+	URLMicrosite           string  `json:"url_microsite"`
+	URLSite                string  `json:"url_site"`
+	URLTwitter             string  `json:"url_twitter"`
+	URLWeb                 string  `json:"url_web"`
+	URLYouTube             string  `json:"url_youtube"`
+}
