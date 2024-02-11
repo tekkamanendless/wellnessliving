@@ -41,42 +41,47 @@ type EventListResponse struct {
 	EventList           []Event   `json:"a_event_list"`
 }
 
+type SearchTag struct {
+	SearchTagID string `json:"k_search_tag"`
+	Title       string `json:"text_title"`
+}
+
 type Event struct {
-	ClassTab []string        `json:"a_class_tab"`
-	Logo     Logo            `json:"a_logo"`
-	Schedule []EventSchedule `json:"a_schedule"`
-	//TODO:"a_search_tag": [],
-	CanCancel         bool      `json:"can_cancel"`
-	EarlybirdEndDate  *Date     `json:"dl_early"`
-	EndDate           Date      `json:"dl_end"`
-	StartDate         Date      `json:"dl_start"`
-	SessionDTU        DateTime  `json:"dtu_session"`
-	SessionAll        int       `json:"i_session_all"`
-	SessionFuture     int       `json:"i_session_future"`
-	SessionPast       int       `json:"i_session_past"`
-	IsAgeRestrict     bool      `json:"is_age_restrict"`
-	IsAvailable       bool      `json:"is_available"`
-	IsBlock           bool      `json:"is_block"`
-	IsBookable        bool      `json:"is_bookable"`
-	IsBooked          bool      `json:"is_booked"`
-	IsClosed          bool      `json:"is_closed"`
-	IsFull            bool      `json:"is_full"`
-	IsOnline          bool      `json:"is_online"`
-	IsOnlinePrivate   bool      `json:"is_online_private"`
-	IsOpen            bool      `json:"is_open"`
-	IsPromotionOnly   bool      `json:"is_promotion_only"`
-	IsProrate         bool      `json:"is_prorate"`
-	IsVirtual         bool      `json:"is_virtual"`
-	ClassID           string    `json:"k_class"`
-	ClassPeriodID     string    `json:"k_class_period"`
-	EnrollmentBlockID string    `json:"k_enrollment_block"`
-	LocationID        string    `json:"k_location"`
-	PriceTotal        Currency  `json:"m_price_total"`
-	PriceTotalEarly   *Currency `json:"m_price_total_early"`
-	AgeRestrictText   string    `json:"text_age_restrict"`
-	Title             string    `json:"text_title"`
-	URLBook           string    `json:"url_book"`
-	XMLDescription    string    `json:"xml_description"`
+	ClassTab          []string        `json:"a_class_tab"`
+	Logo              Logo            `json:"a_logo"`
+	Schedule          []EventSchedule `json:"a_schedule"`
+	SearchTags        []SearchTag     `json:"a_search_tag"`
+	CanCancel         bool            `json:"can_cancel"`
+	EarlybirdEndDate  *Date           `json:"dl_early"`
+	EndDate           Date            `json:"dl_end"`
+	StartDate         Date            `json:"dl_start"`
+	SessionDTU        DateTime        `json:"dtu_session"`
+	SessionAll        int             `json:"i_session_all"`
+	SessionFuture     int             `json:"i_session_future"`
+	SessionPast       int             `json:"i_session_past"`
+	IsAgeRestrict     bool            `json:"is_age_restrict"`
+	IsAvailable       bool            `json:"is_available"`
+	IsBlock           bool            `json:"is_block"`
+	IsBookable        bool            `json:"is_bookable"`
+	IsBooked          bool            `json:"is_booked"`
+	IsClosed          bool            `json:"is_closed"`
+	IsFull            bool            `json:"is_full"`
+	IsOnline          bool            `json:"is_online"`
+	IsOnlinePrivate   bool            `json:"is_online_private"`
+	IsOpen            bool            `json:"is_open"`
+	IsPromotionOnly   bool            `json:"is_promotion_only"`
+	IsProrate         bool            `json:"is_prorate"`
+	IsVirtual         bool            `json:"is_virtual"`
+	ClassID           string          `json:"k_class"`
+	ClassPeriodID     string          `json:"k_class_period"`
+	EnrollmentBlockID string          `json:"k_enrollment_block"`
+	LocationID        string          `json:"k_location"`
+	PriceTotal        Currency        `json:"m_price_total"`
+	PriceTotalEarly   *Currency       `json:"m_price_total_early"`
+	AgeRestrictText   string          `json:"text_age_restrict"`
+	Title             string          `json:"text_title"`
+	URLBook           string          `json:"url_book"`
+	XMLDescription    string          `json:"xml_description"`
 }
 
 type Logo struct {
@@ -142,8 +147,8 @@ type ClassResponse struct {
 type Class struct {
 	ClassTab []string `json:"a_class_tab"`
 	// TODO: "a_config": null,
-	Schedule []ClassSchedule `json:"a_schedule"`
-	// TODO: "a_search_tag": [],
+	Schedule   []ClassSchedule `json:"a_schedule"`
+	SearchTags []SearchTag     `json:"a_search_tag"`
 	// TODO: "a_visits_required": [],
 	HasOwnImage            bool    `json:"has_own_image"`
 	HTMLDescription        string  `json:"html_description"`
@@ -212,9 +217,9 @@ type ScheduleClassSession struct {
 	URLBook           string   `json:"url_book"`
 	Staff             []string `json:"a_staff"`
 	// TODO: "a_virtual_location": []
-	HideApplication bool `json:"hide_application"`
-	IsVirtual       bool `json:"is_virtual"`
-	// TODO: "a_class_tab": [null]
+	HideApplication bool     `json:"hide_application"`
+	IsVirtual       bool     `json:"is_virtual"`
+	ClassTab        []string `json:"a_class_tab"`
 }
 
 type TabResponse struct {
