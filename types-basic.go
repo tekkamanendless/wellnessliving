@@ -77,18 +77,26 @@ func (d *Currency) UnmarshalJSON(contents []byte) error {
 type Float float64
 
 func (d *Float) UnmarshalJSON(contents []byte) error {
-	var v string
-	err := json.Unmarshal(contents, &v)
-	if err != nil {
-		return err
+	{
+		var v float64
+		err := json.Unmarshal(contents, &v)
+		if err == nil {
+			*d = Float(v)
+			return nil
+		}
 	}
-
-	f, err := strconv.ParseFloat(v, 64)
-	if err != nil {
-		return err
+	{
+		var v string
+		err := json.Unmarshal(contents, &v)
+		if err == nil {
+			f, err := strconv.ParseFloat(v, 64)
+			if err == nil {
+				*d = Float(f)
+				return nil
+			}
+		}
 	}
-	*d = Float(f)
-	return nil
+	return fmt.Errorf("could not parse Float from: %s", contents)
 }
 
 // Integer is an integer, which could be represented as an integer or a string string.
