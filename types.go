@@ -243,23 +243,25 @@ type Tab struct {
 type LocationListResponse struct {
 	BaseResponse
 
-	LocationMap map[string]struct {
-		Latitude       Float   `json:"f_latitude"`
-		Longitude      Float   `json:"f_longitude"`
-		Order          Integer `json:"i_order"`
-		BusinessID     string  `json:"k_business"`
-		CountryID      string  `json:"k_country"`
-		LocationID     string  `json:"k_location"`
-		TimezoneID     string  `json:"k_timezone"`
-		RegionID       string  `json:"k_region"`
-		URLLogo        string  `json:"url_logo"`
-		Shift          Integer `json:"i_shift"`
-		Title          string  `json:"s_title"`
-		FullAddress    string  `json:"text_address"`
-		AddressStreet  string  `json:"text_address_individual"`
-		AddressCity    string  `json:"text_city"`
-		AddressCountry string  `json:"text_country"`
-		AddressPostal  string  `json:"text_postal"` // Zip code in the US.
-		AddressRegion  string  `json:"text_region"` // State in the US.
-	} `json:"a_location"`
+	LocationMap map[string]Location `json:"a_location"`
+}
+
+type Location struct {
+	Latitude       Float   `json:"f_latitude"`
+	Longitude      Float   `json:"f_longitude"`
+	Order          Integer `json:"i_order"`
+	BusinessID     string  `json:"k_business"`
+	CountryID      string  `json:"k_country"`
+	LocationID     string  `json:"k_location"`
+	TimezoneID     string  `json:"k_timezone"`
+	RegionID       string  `json:"k_region"`
+	URLLogo        string  `json:"url_logo"`
+	Shift          Integer `json:"i_shift"`
+	Title          string  `json:"s_title"`
+	FullAddress    string  `json:"text_address"`
+	AddressStreet  string  `json:"text_address_individual"`
+	AddressCity    string  `json:"text_city"`
+	AddressCountry string  `json:"text_country"`
+	AddressPostal  string  `json:"text_postal"` // Zip code in the US.
+	AddressRegion  string  `json:"text_region"` // State in the US.
 }
