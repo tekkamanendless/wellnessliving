@@ -57,6 +57,26 @@ const (
 	CurrencySIDZAR CurrencySID = 7
 )
 
+type ModeSID int
+
+const (
+	ModeSIDClasspassBooking ModeSID = 8
+	ModeSIDGoogleBooking    ModeSID = 7
+	ModeSIDGympassBooking   ModeSID = 14
+	ModeSIDImport           ModeSID = 5
+	ModeSIDMicrosite        ModeSID = 12
+	ModeSIDMyPresenceSite   ModeSID = 13
+	ModeSIDSpaBackend       ModeSID = 4
+	ModeSIDSpaFrontend      ModeSID = 3
+	ModeSIDSystem           ModeSID = 10
+	ModeSIDUndefined        ModeSID = 6
+	ModeSIDWebAppAttendance ModeSID = 16
+	ModeSIDWwebAppCheckin   ModeSID = 15
+	ModeSIDWebBackend       ModeSID = 2
+	ModeSIDWebFrontend      ModeSID = 1
+	ModeSIDWidget           ModeSID = 11
+)
+
 type ProjectSID int
 
 const (
