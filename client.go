@@ -36,8 +36,15 @@ type Signature struct {
 	Resource          string
 }
 
-func (c *Client) Request(ctx context.Context, method string, path string, variables url.Values, output interface{}) error {
-	contents, err := c.Raw(ctx, method, path, variables)
+func (c *Client) Request(ctx context.Context, method string, path string, variables url.Values, input interface{}, output interface{}) error {
+	var bodyString string
+	if input != nil {
+		if v, ok := input.(string); ok {
+			bodyString = v
+		}
+	}
+
+	contents, err := c.Raw(ctx, method, path, variables, bodyString)
 	if err != nil {
 		return err
 	}
@@ -68,7 +75,7 @@ func (c *Client) Request(ctx context.Context, method string, path string, variab
 	return nil
 }
 
-func (c *Client) Raw(ctx context.Context, method string, path string, variables url.Values) ([]byte, error) {
+func (c *Client) Raw(ctx context.Context, method string, path string, variables url.Values, bodyString string) ([]byte, error) {
 	baseURL := c.URL
 	if baseURL == "" {
 		baseURL = "https://us.wellnessliving.com"
@@ -90,6 +97,9 @@ func (c *Client) Raw(ctx context.Context, method string, path string, variables 
 	method = strings.ToUpper(method)
 
 	var body io.Reader
+	if bodyString != "" {
+		body = strings.NewReader(bodyString)
+	}
 
 	request, err := http.NewRequest(method, targetURL, body)
 	if err != nil {
@@ -129,6 +139,9 @@ func (c *Client) Raw(ctx context.Context, method string, path string, variables 
 	request.Header.Set("Date", now.Format(time.RFC1123))
 	request.Header.Set("User-Agent", "WellnessLiving SDK/1.1 (WellnessLiving SDK)")
 	request.Header.Set("Authorization", authorization)
+	if bodyString != "" && bodyString[0] == '{' {
+		request.Header.Set("Content-Type", "application/json")
+	}
 
 	{
 		contents, _ := httputil.DumpRequest(request, true)

@@ -31,6 +31,7 @@ func main() {
 	rootCommand.PersistentFlags().BoolVar(&verbose, "verbose", false, "Enable verbose logging.")
 
 	{
+		var bodyString string
 		cmd := &cobra.Command{
 			Use:  "raw <method> <path> [key=value [...]]",
 			Args: cobra.MinimumNArgs(2),
@@ -47,7 +48,7 @@ func main() {
 					values.Set(parts[0], parts[1])
 				}
 
-				contents, err := client.Raw(ctx, method, path, values)
+				contents, err := client.Raw(ctx, method, path, values, bodyString)
 				if err != nil {
 					logrus.WithContext(ctx).Errorf("Could not perform request: [%T] %v", err, err)
 					os.Exit(1)
@@ -55,6 +56,7 @@ func main() {
 				fmt.Printf("%s\n", contents)
 			},
 		}
+		cmd.Flags().StringVar(&bodyString, "body", "", "The body payload.")
 		rootCommand.AddCommand(cmd)
 	}
 
@@ -74,7 +76,7 @@ func main() {
 				}
 
 				var eventListResponse wellnessliving.EventListResponse
-				err := client.Request(ctx, http.MethodGet, "/Wl/Event/EventList.json", values, &eventListResponse)
+				err := client.Request(ctx, http.MethodGet, "/Wl/Event/EventList.json", values, nil, &eventListResponse)
 				if err != nil {
 					logrus.WithContext(ctx).Errorf("Could not perform request: [%T] %v", err, err)
 					os.Exit(1)
@@ -101,7 +103,7 @@ func main() {
 				}
 
 				var locationListResponse wellnessliving.LocationListResponse
-				err := client.Request(ctx, http.MethodGet, "/Wl/Location/List.json", values, &locationListResponse)
+				err := client.Request(ctx, http.MethodGet, "/Wl/Location/List.json", values, nil, &locationListResponse)
 				if err != nil {
 					logrus.WithContext(ctx).Errorf("Could not perform request: [%T] %v", err, err)
 					os.Exit(1)
@@ -130,7 +132,7 @@ func main() {
 				}
 
 				var tabResponse wellnessliving.TabResponse
-				err := client.Request(ctx, http.MethodGet, "/Wl/Schedule/Tab/Tab.json", values, &tabResponse)
+				err := client.Request(ctx, http.MethodGet, "/Wl/Schedule/Tab/Tab.json", values, nil, &tabResponse)
 				if err != nil {
 					logrus.WithContext(ctx).Errorf("Could not perform request: [%T] %v", err, err)
 					os.Exit(1)
