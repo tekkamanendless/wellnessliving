@@ -16,17 +16,17 @@ func (d *Date) UnmarshalJSON(contents []byte) error {
 	var v string
 	err := json.Unmarshal(contents, &v)
 	if err != nil {
-		return err
+		return fmt.Errorf("date: could not unmarshal string: %w", err)
 	}
 
 	location, err := time.LoadLocation("GMT")
 	if err != nil {
-		return err
+		return fmt.Errorf("date: could not load location: %w", err)
 	}
 
 	d.Time, err = time.ParseInLocation("2006-01-02", v, location)
 	if err != nil {
-		return err
+		return fmt.Errorf("date: could not parse string: %w", err)
 	}
 	return nil
 }
@@ -40,17 +40,17 @@ func (d *DateTime) UnmarshalJSON(contents []byte) error {
 	var v string
 	err := json.Unmarshal(contents, &v)
 	if err != nil {
-		return err
+		return fmt.Errorf("datetime: could not unmarshal string: %w", err)
 	}
 
 	location, err := time.LoadLocation("GMT")
 	if err != nil {
-		return err
+		return fmt.Errorf("datetime: could not load location: %w", err)
 	}
 
 	d.Time, err = time.ParseInLocation("2006-01-02 15:04:05", v, location)
 	if err != nil {
-		return err
+		return fmt.Errorf("datetime: could not parse string: %w", err)
 	}
 	return nil
 }
@@ -62,12 +62,12 @@ func (d *Currency) UnmarshalJSON(contents []byte) error {
 	var v string
 	err := json.Unmarshal(contents, &v)
 	if err != nil {
-		return err
+		return fmt.Errorf("currency: could not unmarshal string: %w", err)
 	}
 
 	f, err := strconv.ParseFloat(v, 64)
 	if err != nil {
-		return err
+		return fmt.Errorf("currency: could not parse string: %w", err)
 	}
 	*d = Currency(f)
 	return nil
@@ -96,7 +96,7 @@ func (d *Float) UnmarshalJSON(contents []byte) error {
 			}
 		}
 	}
-	return fmt.Errorf("could not parse Float from: %s", contents)
+	return fmt.Errorf("float: could not parse: %s", contents)
 }
 
 // Integer is an integer, which could be represented as an integer or a string string.
@@ -123,5 +123,5 @@ func (d *Integer) UnmarshalJSON(contents []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("could not parse Integer from: %s", contents)
+	return fmt.Errorf("integer: could not parse: %s", contents)
 }

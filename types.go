@@ -55,7 +55,7 @@ type Event struct {
 	EarlybirdEndDate  *Date           `json:"dl_early"`
 	EndDate           Date            `json:"dl_end"`
 	StartDate         Date            `json:"dl_start"`
-	SessionDTU        DateTime        `json:"dtu_session"`
+	SessionDTU        *DateTime       `json:"dtu_session"` // Date of the closest session of the event.
 	SessionAll        int             `json:"i_session_all"`
 	SessionFuture     int             `json:"i_session_future"`
 	SessionPast       int             `json:"i_session_past"`
