@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/http/cookiejar"
 	"net/http/httputil"
 	"net/url"
 	"os"
@@ -14,13 +15,15 @@ import (
 
 	"github.com/sirupsen/logrus"
 	"github.com/tekkamanendless/httperror"
+	"golang.org/x/crypto/sha3"
 )
 
+// Client is the WellnessLiving client.
 type Client struct {
-	URL               string
-	AuthorizationCode string
-	AuthorizationID   string
-	HTTPClient        http.Client
+	URL               string      // The base URL.  If empty, this will use the WellnessLiving production URL.
+	AuthorizationCode string      // This is your authorization code.
+	AuthorizationID   string      // This is your authorization ID.
+	HTTPClient        http.Client // This is the HTTP client.  It's available in case you need to make tweaks.
 }
 
 type Signature struct {
@@ -36,15 +39,70 @@ type Signature struct {
 	Resource          string
 }
 
+// Login using the given username and password.
+//
+// Logging in is not required for all API requests, but it is for some.
+func (c *Client) Login(ctx context.Context, username string, password string) error {
+	jar, err := cookiejar.New(nil)
+	if err != nil {
+		return fmt.Errorf("could not create cookie jar: %w", err)
+	}
+	c.HTTPClient.Jar = jar
+
+	var notepadResponse NotepadResponse
+	err = c.Request(ctx, http.MethodGet, "/Core/Passport/Login/Enter/Notepad.json", nil, nil, &notepadResponse)
+	if err != nil {
+		return err
+	}
+
+	var hashedPassword string
+	switch notepadResponse.Hash {
+	case "sha3":
+		parts := []string{
+			"r",
+			"4S",
+			"zqX",
+			"zqiOK",
+			"TLVS75V",
+			"Ue5aLaIIG75",
+			"uODJYM2JsCX4G",
+			"kt58wZfHHGQkHW4QN",
+			"Lh9Fl5989crMU4E7P6E",
+		}
+		hashedPassword = fmt.Sprintf("%x", sha3.Sum512([]byte(notepadResponse.Notepad+fmt.Sprintf("%x", sha3.Sum512([]byte(strings.Join(parts, password)+password))))))
+	}
+
+	enterInput := url.Values{}
+	enterInput.Set("s_captcha", "")
+	enterInput.Set("s_login", username)
+	enterInput.Set("s_notepad", notepadResponse.Notepad)
+	enterInput.Set("s_password", hashedPassword)
+	enterInput.Set("s_remember", "")
+	var enterResponse EnterResponse
+	err = c.Request(ctx, http.MethodPost, "/Core/Passport/Login/Enter/Enter.json", enterInput, nil, &enterResponse)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (c *Client) Request(ctx context.Context, method string, path string, variables url.Values, input interface{}, output interface{}) error {
 	var bodyString string
-	if input != nil {
+	header := http.Header{}
+	if input == nil {
+		bodyString = variables.Encode()
+		header.Set("Content-Type", "application/x-www-form-urlencoded")
+	} else {
 		if v, ok := input.(string); ok {
 			bodyString = v
+		} else if v, ok := input.(url.Values); ok {
+			bodyString = v.Encode()
+			header.Set("Content-Type", "application/x-www-form-urlencoded")
 		}
 	}
 
-	contents, err := c.Raw(ctx, method, path, variables, bodyString)
+	contents, err := c.Raw(ctx, method, path, variables, bodyString, header)
 	if err != nil {
 		return err
 	}
@@ -75,7 +133,7 @@ func (c *Client) Request(ctx context.Context, method string, path string, variab
 	return nil
 }
 
-func (c *Client) Raw(ctx context.Context, method string, path string, variables url.Values, bodyString string) ([]byte, error) {
+func (c *Client) Raw(ctx context.Context, method string, path string, variables url.Values, bodyString string, header http.Header) ([]byte, error) {
 	baseURL := c.URL
 	if baseURL == "" {
 		baseURL = "https://us.wellnessliving.com"
@@ -105,6 +163,11 @@ func (c *Client) Raw(ctx context.Context, method string, path string, variables 
 	if err != nil {
 		return nil, fmt.Errorf("wellnessliving: could not create request: %w", err)
 	}
+	for key, values := range header {
+		for _, value := range values {
+			request.Header.Add(key, value)
+		}
+	}
 
 	tz, err := time.LoadLocation("GMT")
 	if err != nil {
@@ -126,12 +189,27 @@ func (c *Client) Raw(ctx context.Context, method string, path string, variables 
 		Variables:         variables,
 		Time:              now,
 		AuthorizationCode: authorizationCode,
-		CookiePersistent:  "", // TODO
-		CookieTransient:   "", // TODO
+		CookiePersistent:  "", // Default these to empty for now.
+		CookieTransient:   "", // Default these to empty for now.
 		Host:              myURL.Host,
 		AuthorizationID:   authorizationID,
 		Method:            strings.ToUpper(method),
 		Resource:          strings.TrimLeft(path, "/"),
+	}
+	if c.HTTPClient.Jar != nil {
+		cookieURL, err := url.Parse(targetURL)
+		if err != nil {
+			return nil, fmt.Errorf("could not parse URL for cookies: %w", err)
+		}
+		cookies := c.HTTPClient.Jar.Cookies(cookieURL)
+		for _, cookie := range cookies {
+			switch cookie.Name {
+			case "p":
+				signature.CookiePersistent = cookie.Value
+			case "t":
+				signature.CookieTransient = cookie.Value
+			}
+		}
 	}
 	authorization := computeAuthorizationHash(signature)
 

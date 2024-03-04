@@ -33,6 +33,20 @@ func (r *ErrorResponse) Error() string {
 	return fmt.Sprintf("%+v", *r)
 }
 
+// NotepadResponse is the response from "/Core/Passport/Login/Enter/Notepad.json".
+type NotepadResponse struct {
+	BaseResponse
+
+	RegionID *string `json:"id_region"`
+	Hash     string  `json:"s_hash"`
+	Notepad  string  `json:"s_notepad"`
+}
+
+// EnterResponse is the response from "/Core/Passport/Login/Enter/Enter.json".
+type EnterResponse struct {
+	URLRedirect string `json:"url_redirect"`
+}
+
 // EventListResponse is the response from "/Wl/Event/EventList.json".
 type EventListResponse struct {
 	BaseResponse

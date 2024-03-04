@@ -20,15 +20,27 @@ func main() {
 	client := wellnessliving.Client{}
 
 	var verbose bool
+	var username string
+	var password string
 	rootCommand := &cobra.Command{
 		Use: "wellnessliving",
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
 			if verbose {
 				logrus.SetLevel(logrus.DebugLevel)
 			}
+
+			if username != "" || password != "" {
+				err := client.Login(ctx, username, password)
+				if err != nil {
+					logrus.WithContext(ctx).Errorf("Could not log in as %q: %v", username, err)
+					os.Exit(1)
+				}
+			}
 		},
 	}
 	rootCommand.PersistentFlags().BoolVar(&verbose, "verbose", false, "Enable verbose logging.")
+	rootCommand.PersistentFlags().StringVar(&username, "username", "", "The WellnessLiving user to login as (if any).")
+	rootCommand.PersistentFlags().StringVar(&password, "password", "", "The WellnessLiving user to login as (if any).")
 
 	{
 		var bodyString string
@@ -48,7 +60,7 @@ func main() {
 					values.Set(parts[0], parts[1])
 				}
 
-				contents, err := client.Raw(ctx, method, path, values, bodyString)
+				contents, err := client.Raw(ctx, method, path, values, bodyString, nil)
 				if err != nil {
 					logrus.WithContext(ctx).Errorf("Could not perform request: [%T] %v", err, err)
 					os.Exit(1)
