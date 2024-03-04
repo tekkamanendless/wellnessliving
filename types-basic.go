@@ -22,6 +22,9 @@ func (d *Date) UnmarshalJSON(contents []byte) error {
 	if v == "" {
 		return nil
 	}
+	if v == "0000-00-00" {
+		return nil
+	}
 
 	location, err := time.LoadLocation("GMT")
 	if err != nil {
@@ -50,6 +53,9 @@ func (d *DateTime) UnmarshalJSON(contents []byte) error {
 	if v == "" {
 		return nil
 	}
+	if v == "0000-00-00 00:00:00" {
+		return nil
+	}
 
 	location, err := time.LoadLocation("GMT")
 	if err != nil {
@@ -71,6 +77,10 @@ func (d *Currency) UnmarshalJSON(contents []byte) error {
 	err := json.Unmarshal(contents, &v)
 	if err != nil {
 		return fmt.Errorf("currency: could not unmarshal string: %w", err)
+	}
+
+	if v == "" {
+		return nil
 	}
 
 	f, err := strconv.ParseFloat(v, 64)
@@ -97,6 +107,9 @@ func (d *Float) UnmarshalJSON(contents []byte) error {
 		var v string
 		err := json.Unmarshal(contents, &v)
 		if err == nil {
+			if v == "" {
+				return nil
+			}
 			f, err := strconv.ParseFloat(v, 64)
 			if err == nil {
 				*d = Float(f)
@@ -123,6 +136,9 @@ func (d *Integer) UnmarshalJSON(contents []byte) error {
 		var v string
 		err := json.Unmarshal(contents, &v)
 		if err == nil {
+			if v == "" {
+				return nil
+			}
 			f, err := strconv.ParseInt(v, 10, 64)
 			if err != nil {
 				return err

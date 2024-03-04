@@ -404,7 +404,7 @@ type AttendanceListResponse struct {
 		HTMLTooltipBookedBy  string    `json:"html_tooltip_book_by"`
 		Remaining            *Integer  `json:"i_left"`
 		Total                Integer   `json:"i_total"`
-		GenderID             Integer   `json:"id_gender"`
+		GenderID             *Integer  `json:"id_gender"`
 		ProgramID            Integer   `json:"id_program"`
 		IDVisit              Integer   `json:"id_visit"` // TODO: Find a better name for this.
 		IsAttend             bool      `json:"is_attend"`
@@ -436,7 +436,7 @@ type AttendanceListResponse struct {
 		Phone                string    `json:"s_phone"`
 		Promotion            string    `json:"s_promotion"`
 		ModeSID              string    `json:"sid_mode"` // For example: "web-backend"
-		TextAge              *string   `json:"text_age"`
+		TextAge              *Integer  `json:"text_age"`
 		TextExpire           string    `json:"text_expire"`
 		TextFirestName       string    `json:"text_firstname"`
 		TextIconClass        string    `json:"text_icon_class"`
