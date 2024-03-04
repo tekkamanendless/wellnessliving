@@ -383,7 +383,7 @@ type LocationResponse struct {
 	URLYouTube             string  `json:"url_youtube"`
 }
 
-type AttendenceListResponse struct {
+type AttendanceListResponse struct {
 	ListActive []struct {
 		Photo struct {
 			Login   string  `json:"s_login"`
