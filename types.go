@@ -382,3 +382,88 @@ type LocationResponse struct {
 	URLWeb                 string  `json:"url_web"`
 	URLYouTube             string  `json:"url_youtube"`
 }
+
+type AttendenceListResponse struct {
+	ListActive []struct {
+		Photo struct {
+			Login   string  `json:"s_login"`
+			Height  Integer `json:"i_height"`
+			Width   Integer `json:"i_width"`
+			URL     string  `json:"s_url"`
+			IsEmpty bool    `json:"is_empty"`
+		} `json:"a_photo"`
+		// TODO: "a_wait_confirm": [],
+		BookedDate           DateTime  `json:"dt_book"`     // In UTC.
+		Date                 DateTime  `json:"dt_date"`     // In UTC.
+		ExpireDate           *DateTime `json:"dt_expire"`   // Can be "".
+		RegisterDate         DateTime  `json:"dt_register"` // Can be "0000-00-00 00:00:00".
+		HTMLAge              string    `json:"html_age"`
+		HTMLBookedBy         string    `json:"html_book_by"`
+		HTMLGenderClass      string    `json:"html_gender_class"`
+		HTMLMember           string    `json:"html_member"`
+		HTMLTooltipBookedBy  string    `json:"html_tooltip_book_by"`
+		Remaining            *Integer  `json:"i_left"`
+		Total                Integer   `json:"i_total"`
+		GenderID             Integer   `json:"id_gender"`
+		ProgramID            Integer   `json:"id_program"`
+		IDVisit              Integer   `json:"id_visit"` // TODO: Find a better name for this.
+		IsAttend             bool      `json:"is_attend"`
+		IsDeposit            bool      `json:"is_deposit"`
+		IsEarly              bool      `json:"is_early"`
+		IsFree               bool      `json:"is_free"`
+		IsHidden             bool      `json:"is_hidden"`
+		PassProspectID       Integer   `json:"id_pass_prospect"`
+		IsPenalty            bool      `json:"is_penalty"`
+		IsPending            bool      `json:"is_pending"`
+		IsPromotion          bool      `json:"is_promotion"`
+		IsPromotionChange    *bool     `json:"is_promotion_change"`
+		IsRestrict           bool      `json:"is_restrict"`
+		IsTruancy            bool      `json:"is_truancy"`
+		IsUnpaid             bool      `json:"is_unpaid"`
+		IsVisit              bool      `json:"is_visit"`
+		IsWait               bool      `json:"is_wait"`
+		IsWaitConfirm        bool      `json:"is_wait_confirm"`
+		IsWaitPriority       Integer   `json:"is_wait_priority"`
+		LocationID           string    `json:"k_location"`
+		LoginPromotionID     *string   `json:"k_login_promotion"`
+		VisitID              string    `json:"k_visit"`
+		Expire               string    `json:"s_expire"`
+		FirstName            string    `json:"s_firstname"`
+		LastName             string    `json:"s_lastname"`
+		Login                string    `json:"s_login"`
+		EmailAddress         string    `json:"s_mail"`
+		Note                 string    `json:"s_note"`
+		Phone                string    `json:"s_phone"`
+		Promotion            string    `json:"s_promotion"`
+		ModeSID              string    `json:"sid_mode"` // For example: "web-backend"
+		TextAge              *string   `json:"text_age"`
+		TextExpire           string    `json:"text_expire"`
+		TextFirestName       string    `json:"text_firstname"`
+		TextIconClass        string    `json:"text_icon_class"`
+		TextLastName         string    `json:"text_lastname"`
+		TextMember           *string   `json:"text_member"`
+		TextPromition        string    `json:"text_promotion"`
+		TextVisitStatusClass string    `json:"text_visit_status_class"`
+		TextVisitStatusIcon  string    `json:"text_visit_status_icon"`
+		UID                  string    `json:"uid"`
+		UIDBook              string    `json:"uid_book"`
+		URLCancel            string    `json:"url-cancel"`
+		URLCancelAdmin       string    `json:"url-cancel-admin"`
+		URLLoginView         string    `json:"url-login-view"`
+		URLMail              string    `json:"url-mail"`
+		URLProfile           string    `json:"url-profile"`
+		I                    Integer   `json:"i"`
+		Order                Integer   `json:"i_order"`
+		// TODO: "a_resource": [],
+		CanProfile bool `json:"can_profile"`
+		// TODO: "a_wearable": [],
+		Icon struct {
+			ColorBackground string `json:"s_color_background"`
+			ColorForeground string `json:"s_color_foreground"`
+			Letter          string `json:"s_letter"`
+			Shape           string `json:"s_shape"`
+			Title           string `json:"s_title"`
+			ShapeSID        string `json:"sid_shape"`
+		} `json:"icon"`
+	} `json:"a_list_active"`
+}

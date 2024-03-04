@@ -19,6 +19,10 @@ func (d *Date) UnmarshalJSON(contents []byte) error {
 		return fmt.Errorf("date: could not unmarshal string: %w", err)
 	}
 
+	if v == "" {
+		return nil
+	}
+
 	location, err := time.LoadLocation("GMT")
 	if err != nil {
 		return fmt.Errorf("date: could not load location: %w", err)
@@ -41,6 +45,10 @@ func (d *DateTime) UnmarshalJSON(contents []byte) error {
 	err := json.Unmarshal(contents, &v)
 	if err != nil {
 		return fmt.Errorf("datetime: could not unmarshal string: %w", err)
+	}
+
+	if v == "" {
+		return nil
 	}
 
 	location, err := time.LoadLocation("GMT")
