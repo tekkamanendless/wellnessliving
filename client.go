@@ -19,13 +19,24 @@ import (
 )
 
 // Client is the WellnessLiving client.
+//
+// At miniumum, you will need to set AuthorizationCode and AuthorizationID.
+// These values must be obtained by WellnessLiving as part of signing up for their API program.
+//
+// If not otherwise specified, those values are loaded from the following environment variables:
+// * WELLNESSLIVING_AUTHORIZATION_CODE
+// * WELLNESSLIVING_AUTHORIZATION_ID
+//
+// If you wish to use the WellnessLiving staging API, then you will need to set URL, as well.
 type Client struct {
 	URL               string      // The base URL.  If empty, this will use the WellnessLiving production URL.
-	AuthorizationCode string      // This is your authorization code.
-	AuthorizationID   string      // This is your authorization ID.
+	AuthorizationCode string      // This is your authorization code.  If not set, the value of WELLNESSLIVING_AUTHORIZATION_CODE will be used.
+	AuthorizationID   string      // This is your authorization ID.  If not set, the value of WELLNESSLIVING_AUTHORIZATION_CODE will be used.
 	HTTPClient        http.Client // This is the HTTP client.  It's available in case you need to make tweaks.
 }
 
+// Signature contains all of the pieces of information needed to compute the signature verification
+// that is needed for every API request.
 type Signature struct {
 	Header            http.Header
 	Variables         url.Values
@@ -42,6 +53,9 @@ type Signature struct {
 // Login using the given username and password.
 //
 // Logging in is not required for all API requests, but it is for some.
+//
+// After logging in, the client will be authenticated for all future requests using the client's
+// cookie jar as part of HTTPClient.
 func (c *Client) Login(ctx context.Context, username string, password string) error {
 	jar, err := cookiejar.New(nil)
 	if err != nil {
@@ -87,16 +101,29 @@ func (c *Client) Login(ctx context.Context, username string, password string) er
 	return nil
 }
 
+// Request performs and API request.
+//
+// variables is what WellnessLiving refers to as such.  These will be used as query parameters.
+// For requests that normally expect a body (such as POST), they will be converted to form values
+// and the encoding will be set appropriately.
 func (c *Client) Request(ctx context.Context, method string, path string, variables url.Values, input interface{}, output interface{}) error {
 	var bodyString string
 	header := http.Header{}
 	if input == nil {
-		bodyString = variables.Encode()
-		header.Set("Content-Type", "application/x-www-form-urlencoded")
+		switch strings.ToUpper(method) {
+		case http.MethodGet, http.MethodDelete:
+			// Do not attempt to construct a body.
+		default:
+			// Construct a body for the request.
+			bodyString = variables.Encode()
+			header.Set("Content-Type", "application/x-www-form-urlencoded")
+		}
 	} else {
 		if v, ok := input.(string); ok {
+			// The input is a string; use it as-is.
 			bodyString = v
 		} else if v, ok := input.(url.Values); ok {
+			// The input is a collection of values; encode it as a form.
 			bodyString = v.Encode()
 			header.Set("Content-Type", "application/x-www-form-urlencoded")
 		}
@@ -133,6 +160,19 @@ func (c *Client) Request(ctx context.Context, method string, path string, variab
 	return nil
 }
 
+// Raw performs a raw request and returns any response content.
+//
+// If the response is an error response, then the appropriate `httperror` response will be returned.
+//
+// variables will be used as query parameters.
+// bodyString, if not empty, will be used as the body.  Please ensure that the "Content-Type" header is set appropriately.
+// header is the set of HTTP headers to send.
+//
+// In addition to any headers specified, the following headers will be set:
+// * Accept
+// * Date
+// * User-Agent
+// * Authorization
 func (c *Client) Raw(ctx context.Context, method string, path string, variables url.Values, bodyString string, header http.Header) ([]byte, error) {
 	baseURL := c.URL
 	if baseURL == "" {
