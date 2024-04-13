@@ -442,7 +442,7 @@ type AttendanceListPerson struct {
 	LastName             string   `json:"s_lastname"`  // Deprecated: use "text_lastname" instead.
 	Login                string   `json:"s_login"`
 	EmailAddress         string   `json:"s_mail"`
-	Note                 string   `json:"s_note"` // Deprecated: use "text_note" instead.
+	Note                 string   `json:"s_note"`
 	Phone                string   `json:"s_phone"`
 	Promotion            string   `json:"s_promotion"`
 	ModeSID              string   `json:"sid_mode"` // For example: "web-backend"
