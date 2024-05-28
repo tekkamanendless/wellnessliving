@@ -236,6 +236,88 @@ type ScheduleClassSession struct {
 	ClassTab        []string `json:"a_class_tab"`
 }
 
+// ScheduleClassViewResponse is the response from "/Wl/Schedule/ClassView/ClassView.json".
+type ScheduleClassViewResponse struct {
+	BaseResponse
+
+	// TODO: "a_asset"
+	// TODO: "a_class"
+	// TODO: "a_location"
+	SessionResult []struct {
+		// TODO: "a_asset"
+		Class struct {
+			// TODO: "a_class_tab"
+			Image struct {
+				Height  Integer `json:"i_height"`
+				Width   Integer `json:"i_width"`
+				IsEmpty bool    `json:"is_empty"`
+				IsOwn   bool    `json:"is_own"`
+				URL     string  `json:"https://d12lnanyhdwsnh.cloudfront.net/1/kXI.png"`
+			} `json:"a_image"`
+			// TODO: "a_search_tag"
+			// TODO: "a_tag"
+			CanBook           bool     `json:"can_book"`
+			GlobalDate        DateTime `json:"dt_date_global"`
+			LocalDate         DateTime `json:"dt_date_local"`
+			HTMLDenyReason    string   `json:"html_deny_reason"`
+			HTMLDescription   string   `json:"html_description"`
+			HTMLSpecial       string   `json:"html_special"`
+			AgeFrom           *Integer `json:"i_age_from"`
+			AgeTo             *Integer `json:"i_age_to"`
+			Book              Integer  `json:"i_book"`
+			BookActive        Integer  `json:"i_book_active"`
+			Capacity          Integer  `json:"i_capacity"`
+			Duration          Integer  `json:"i_duration"` // In minutes.
+			Wait              Integer  `json:"i_wait"`
+			WaitLimit         *Integer `json:"i_wait_limit"`
+			WaitSpot          Integer  `json:"i_wait_spot"`
+			DenyReasonID      Integer  `json:"id_deny_reason"`
+			IsAgePublic       Integer  `json:"is_age_public"`
+			IsBook            bool     `json:"is_book"`
+			IsCancel          bool     `json:"is_cancel"`
+			IsEvent           bool     `json:"is_event"`
+			IsPromotionOnly   bool     `json:"is_promotion_only"`
+			VirtualProviderID *Integer `json:"id_virtual_provider"`
+			IsVirtual         bool     `json:"is_virtual"`
+			IsWait            bool     `json:"is_wait"`
+			IsWaitList        bool     `json:"is_wait_list"`
+			IsWaitListEnabled bool     `json:"is_wait_list_enabled"`
+			ClassID           string   `json:"k_class"`
+			Price             Currency `json:"m_price"`
+			HidePrice         bool     `json:"hide_price"`
+			DurationString    string   `json:"s_duration"`
+			Title             string   `json:"s_title"`
+			RoomText          string   `json:"text_room"`
+			TimezoneString    string   `json:"text_timezone"`
+			VirtualJoinURL    string   `json:"url_virtual_join"`
+		} `json:"a_class"`
+		Location struct {
+			Latitude   Float  `json:"f_latitude"`
+			Longitude  Float  `json:"f_longitude"`
+			Rate       Float  `json:"f_rate"`
+			LocationID string `json:"k_location"`
+			Address    string `json:"s_address"`
+			Map        string `json:"s_map"`
+			Phone      string `json:"s_phone"`
+			Title      string `json:"s_title"`
+		} `json:"a_location"`
+		Staff []struct {
+			StaffID      Integer `json:"k_staff"`
+			Family       string  `json:"s_family"`
+			Name         string  `json:"s_name"`
+			FullName     string  `json:"s_name_full"`
+			Position     string  `json:"s_position"`
+			UID          string  `json:"uid"`
+			XMLBiography string  `json:"xml_biography"`
+		} `json:"a_staff"`
+		// TODO: "a_visits_required"
+		Date          DateTime `json:"dt_date"`
+		ClassPeriodID string   `json:"k_class_period"`
+	} `json:"a_session_result"`
+	// TODO: "a_staff"
+	// TODO: "a_visits_required"
+}
+
 type TabResponse struct {
 	BaseResponse
 
