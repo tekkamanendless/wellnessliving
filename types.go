@@ -15,18 +15,18 @@ type BaseResponse struct {
 type ErrorResponse struct {
 	BaseResponse
 
-	Errors  []Error `json:"a_error"`
-	Class   string  `json:"class"`
-	Code    *int    `json:"code"`
-	Message string  `json:"message"`
+	Errors  []Error  `json:"a_error"`
+	Class   string   `json:"class"`
+	Code    *Integer `json:"code"`
+	Message string   `json:"message"`
 }
 
 type Error struct {
-	HTMLMessage string  `json:"html_message"`
-	ID          *int    `json:"id"`
-	Field       *string `json:"s_field"`
-	Message     string  `json:"s_message"`
-	SID         string  `json:"sid"`
+	HTMLMessage string   `json:"html_message"`
+	ID          *Integer `json:"id"`
+	Field       *string  `json:"s_field"`
+	Message     string   `json:"s_message"`
+	SID         string   `json:"sid"`
 }
 
 func (r *ErrorResponse) Error() string {
@@ -70,9 +70,9 @@ type Event struct {
 	EndDate           Date            `json:"dl_end"`
 	StartDate         Date            `json:"dl_start"`
 	SessionDTU        *DateTime       `json:"dtu_session"` // Date of the closest session of the event.
-	SessionAll        int             `json:"i_session_all"`
-	SessionFuture     int             `json:"i_session_future"`
-	SessionPast       int             `json:"i_session_past"`
+	SessionAll        Integer         `json:"i_session_all"`
+	SessionFuture     Integer         `json:"i_session_future"`
+	SessionPast       Integer         `json:"i_session_past"`
 	IsAgeRestrict     bool            `json:"is_age_restrict"`
 	IsAvailable       bool            `json:"is_available"`
 	IsBlock           bool            `json:"is_block"`
@@ -104,51 +104,51 @@ type Logo struct {
 	Image    Image  `json:"a_image"`
 	IsOwn    bool   `json:"is_own"`
 
-	Height       int    `json:"i_height"`
-	HeightSource int    `json:"i_height_src"` // Not present if "a_image" is set.
-	Rotate       int    `json:"i_rotate"`     // Not present if "a_image" is set.
-	Width        int    `json:"i_width"`
-	WidthSource  int    `json:"i_width_src"`   // Not present if "a_image" is set.
-	IDTypeSource int    `json:"id_type_src"`   // Not present if "a_image" is set.
-	IsResize     bool   `json:"is-resize"`     // Not present if "a_image" is set.
-	URLView      string `json:"url-view"`      // Not present if "a_image" is set.
-	URLThumbnail string `json:"url-thumbnail"` // Not present if "a_image" is set.
-	IsOld        bool   `json:"is_old"`
-	URL          string `json:"s_url"`
+	Height       Integer `json:"i_height"`
+	HeightSource Integer `json:"i_height_src"` // Not present if "a_image" is set.
+	Rotate       Integer `json:"i_rotate"`     // Not present if "a_image" is set.
+	Width        Integer `json:"i_width"`
+	WidthSource  Integer `json:"i_width_src"`   // Not present if "a_image" is set.
+	IDTypeSource Integer `json:"id_type_src"`   // Not present if "a_image" is set.
+	IsResize     bool    `json:"is-resize"`     // Not present if "a_image" is set.
+	URLView      string  `json:"url-view"`      // Not present if "a_image" is set.
+	URLThumbnail string  `json:"url-thumbnail"` // Not present if "a_image" is set.
+	IsOld        bool    `json:"is_old"`
+	URL          string  `json:"s_url"`
 }
 
 type Image struct {
-	Height       int    `json:"i_height"`
-	HeightSource int    `json:"i_height_src"`
-	Rotate       int    `json:"i_rotate"`
-	Width        int    `json:"i_width"`
-	WidthSource  int    `json:"i_width_src"`
-	IDTypeSource int    `json:"id_type_src"`
-	IsResize     bool   `json:"is-resize"`
-	URLView      string `json:"url-view"`
-	URLThumbnail string `json:"url-thumbnail"`
+	Height       Integer `json:"i_height"`
+	HeightSource Integer `json:"i_height_src"`
+	Rotate       Integer `json:"i_rotate"`
+	Width        Integer `json:"i_width"`
+	WidthSource  Integer `json:"i_width_src"`
+	IDTypeSource Integer `json:"id_type_src"`
+	IsResize     bool    `json:"is-resize"`
+	URLView      string  `json:"url-view"`
+	URLThumbnail string  `json:"url-thumbnail"`
 }
 
 type EventSchedule struct {
-	Day           map[string]int `json:"a_day"`
-	StaffMember   []StaffMember  `json:"a_staff_member"`
-	EndDate       Date           `json:"dl_end"`
-	StartDate     Date           `json:"dl_start"`
-	IsDay         bool           `json:"is_day"`
-	ClassPeriodID string         `json:"k_class_period"`
-	LocationID    string         `json:"k_location"`
-	LocationText  string         `json:"text_location"`
-	TimeText      string         `json:"text_time"`
+	Day           map[string]Integer `json:"a_day"`
+	StaffMember   []StaffMember      `json:"a_staff_member"`
+	EndDate       Date               `json:"dl_end"`
+	StartDate     Date               `json:"dl_start"`
+	IsDay         bool               `json:"is_day"`
+	ClassPeriodID string             `json:"k_class_period"`
+	LocationID    string             `json:"k_location"`
+	LocationText  string             `json:"text_location"`
+	TimeText      string             `json:"text_time"`
 }
 
 type StaffMember struct {
-	StaffMemberID int    `json:"k_staff_member"`
-	BusinessRole  string `json:"text_business_role"`
-	Mail          string `json:"text_mail"`
-	NameFirst     string `json:"text_name_first"`
-	NameFull      string `json:"text_name_full"`
-	NameLast      string `json:"text_name_last"`
-	UID           string `json:"uid"`
+	StaffMemberID Integer `json:"k_staff_member"`
+	BusinessRole  string  `json:"text_business_role"`
+	Mail          string  `json:"text_mail"`
+	NameFirst     string  `json:"text_name_first"`
+	NameFull      string  `json:"text_name_full"`
+	NameLast      string  `json:"text_name_last"`
+	UID           string  `json:"uid"`
 }
 
 // ClassResponse is the response from "/Wl/Classes/ClassView/Element.json".
@@ -190,20 +190,20 @@ type Class struct {
 type ClassSchedule struct {
 	Repeat struct {
 		RepeatAmount   Integer `json:"i_repeat"`  // "2" (for every 2)
-		RepeatInterval int     `json:"id_repeat"` // 7 (for weeks)
+		RepeatInterval Integer `json:"id_repeat"` // 7 (for weeks)
 	} `json:"a_repeat"`
-	StaffIDs          []int    `json:"a_staff_key"`
-	EndDate           Date     `json:"dl_end"`
-	StartDate         Date     `json:"dl_start"`
-	DayOfWeek         int      `json:"i_day"` // 1 is Monday; 7 is Sunday.
-	DurationInMinutes int      `json:"i_duration"`
-	IsCancel          bool     `json:"is_cancel"`
-	ClassID           string   `json:"k_class"`
-	ClassPeriodID     string   `json:"k_class_period"`
-	LocationID        string   `json:"k_location"`
-	Price             Currency `json:"m_price"`
-	TextTimeRange     string   `json:"text_time_range"` // 7:00pm - 9:00pm
-	TextTimeStart     string   `json:"text_time_start"` // 7:00pm
+	StaffIDs          []Integer `json:"a_staff_key"`
+	EndDate           Date      `json:"dl_end"`
+	StartDate         Date      `json:"dl_start"`
+	DayOfWeek         Integer   `json:"i_day"` // 1 is Monday; 7 is Sunday.
+	DurationInMinutes Integer   `json:"i_duration"`
+	IsCancel          bool      `json:"is_cancel"`
+	ClassID           string    `json:"k_class"`
+	ClassPeriodID     string    `json:"k_class_period"`
+	LocationID        string    `json:"k_location"`
+	Price             Currency  `json:"m_price"`
+	TextTimeRange     string    `json:"text_time_range"` // 7:00pm - 9:00pm
+	TextTimeStart     string    `json:"text_time_start"` // 7:00pm
 }
 
 // ScheduleClassListResponse is the response from "/Wl/Schedule/ClassList/ClassList.json".
@@ -220,8 +220,8 @@ type ScheduleClassSession struct {
 	StartTime         DateTime `json:"dt_date"`  // This is in UTC.
 	TimeString        string   `json:"dt_time"`  // "19:15:00"
 	LocalStartTime    DateTime `json:"dtl_date"` // "2024-02-23 19:15:00"
-	DayOfWeek         int      `json:"i_day"`
-	DurationInMinutes int      `json:"i_duration"`
+	DayOfWeek         Integer  `json:"i_day"`
+	DurationInMinutes Integer  `json:"i_duration"`
 	IsCancel          Integer  `json:"is_cancel"` // "0"
 	ClassID           string   `json:"k_class"`
 	ClassPeriodID     string   `json:"k_class_period"`
@@ -325,14 +325,14 @@ type TabResponse struct {
 }
 
 type Tab struct {
-	IDClassTabObject  int      `json:"id_class_tab_object"`
-	IDClassTabSystem  int      `json:"id_class_tab_system"`
+	IDClassTabObject  Integer  `json:"id_class_tab_object"`
+	IDClassTabSystem  Integer  `json:"id_class_tab_system"`
 	ClassTabID        *Integer `json:"k_class_tab"`
 	ResourceTypeID    *Integer `json:"k_resource_type"`
 	ServiceCategoryID *Integer `json:"k_service_category"`
 	Title             string   `json:"s_title"`
-	ID                int      `json:"k_id"`
-	Order             int      `json:"i_order"`
+	ID                Integer  `json:"k_id"`
+	Order             Integer  `json:"i_order"`
 	URLOrigin         string   `json:"url_origin"`
 }
 
