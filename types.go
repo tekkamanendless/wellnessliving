@@ -65,7 +65,7 @@ type Event struct {
 	Logo              Logo            `json:"a_logo"`
 	Schedule          []EventSchedule `json:"a_schedule"`
 	SearchTags        []SearchTag     `json:"a_search_tag"`
-	CanCancel         bool            `json:"can_cancel"`
+	CanCancel         Bool            `json:"can_cancel"`
 	EarlybirdEndDate  *Date           `json:"dl_early"`
 	EndDate           Date            `json:"dl_end"`
 	StartDate         Date            `json:"dl_start"`
@@ -73,19 +73,19 @@ type Event struct {
 	SessionAll        Integer         `json:"i_session_all"`
 	SessionFuture     Integer         `json:"i_session_future"`
 	SessionPast       Integer         `json:"i_session_past"`
-	IsAgeRestrict     bool            `json:"is_age_restrict"`
-	IsAvailable       bool            `json:"is_available"`
-	IsBlock           bool            `json:"is_block"`
-	IsBookable        bool            `json:"is_bookable"`
-	IsBooked          bool            `json:"is_booked"`
-	IsClosed          bool            `json:"is_closed"`
-	IsFull            bool            `json:"is_full"`
-	IsOnline          bool            `json:"is_online"`
-	IsOnlinePrivate   bool            `json:"is_online_private"`
-	IsOpen            bool            `json:"is_open"`
-	IsPromotionOnly   bool            `json:"is_promotion_only"`
-	IsProrate         bool            `json:"is_prorate"`
-	IsVirtual         bool            `json:"is_virtual"`
+	IsAgeRestrict     Bool            `json:"is_age_restrict"`
+	IsAvailable       Bool            `json:"is_available"`
+	IsBlock           Bool            `json:"is_block"`
+	IsBookable        Bool            `json:"is_bookable"`
+	IsBooked          Bool            `json:"is_booked"`
+	IsClosed          Bool            `json:"is_closed"`
+	IsFull            Bool            `json:"is_full"`
+	IsOnline          Bool            `json:"is_online"`
+	IsOnlinePrivate   Bool            `json:"is_online_private"`
+	IsOpen            Bool            `json:"is_open"`
+	IsPromotionOnly   Bool            `json:"is_promotion_only"`
+	IsProrate         Bool            `json:"is_prorate"`
+	IsVirtual         Bool            `json:"is_virtual"`
 	ClassID           string          `json:"k_class"`
 	ClassPeriodID     string          `json:"k_class_period"`
 	EnrollmentBlockID string          `json:"k_enrollment_block"`
@@ -102,7 +102,7 @@ type Logo struct {
 	Business string `json:"k_business"`
 	Class    string `json:"k_class"`
 	Image    Image  `json:"a_image"`
-	IsOwn    bool   `json:"is_own"`
+	IsOwn    Bool   `json:"is_own"`
 
 	Height       Integer `json:"i_height"`
 	HeightSource Integer `json:"i_height_src"` // Not present if "a_image" is set.
@@ -110,10 +110,10 @@ type Logo struct {
 	Width        Integer `json:"i_width"`
 	WidthSource  Integer `json:"i_width_src"`   // Not present if "a_image" is set.
 	IDTypeSource Integer `json:"id_type_src"`   // Not present if "a_image" is set.
-	IsResize     bool    `json:"is-resize"`     // Not present if "a_image" is set.
+	IsResize     Bool    `json:"is-resize"`     // Not present if "a_image" is set.
 	URLView      string  `json:"url-view"`      // Not present if "a_image" is set.
 	URLThumbnail string  `json:"url-thumbnail"` // Not present if "a_image" is set.
-	IsOld        bool    `json:"is_old"`
+	IsOld        Bool    `json:"is_old"`
 	URL          string  `json:"s_url"`
 }
 
@@ -124,7 +124,7 @@ type Image struct {
 	Width        Integer `json:"i_width"`
 	WidthSource  Integer `json:"i_width_src"`
 	IDTypeSource Integer `json:"id_type_src"`
-	IsResize     bool    `json:"is-resize"`
+	IsResize     Bool    `json:"is-resize"`
 	URLView      string  `json:"url-view"`
 	URLThumbnail string  `json:"url-thumbnail"`
 }
@@ -134,7 +134,7 @@ type EventSchedule struct {
 	StaffMember   []StaffMember      `json:"a_staff_member"`
 	EndDate       Date               `json:"dl_end"`
 	StartDate     Date               `json:"dl_start"`
-	IsDay         bool               `json:"is_day"`
+	IsDay         Bool               `json:"is_day"`
 	ClassPeriodID string             `json:"k_class_period"`
 	LocationID    string             `json:"k_location"`
 	LocationText  string             `json:"text_location"`
@@ -164,23 +164,23 @@ type Class struct {
 	Schedule   []ClassSchedule `json:"a_schedule"`
 	SearchTags []SearchTag     `json:"a_search_tag"`
 	// TODO: "a_visits_required": [],
-	HasOwnImage            bool    `json:"has_own_image"`
-	HTMLDescription        string  `json:"html_description"`
-	HTMLSpecialInstruction string  `json:"html_special_instruction"`
-	IsAgePublic            Integer `json:"is_age_public"` // "0"
+	HasOwnImage            Bool   `json:"has_own_image"`
+	HTMLDescription        string `json:"html_description"`
+	HTMLSpecialInstruction string `json:"html_special_instruction"`
+	IsAgePublic            Bool   `json:"is_age_public"` // "0"
 	// TODO: "i_age_from": null,
 	// TODO: "i_age_to": null,
-	IsBookable              bool      `json:"is_bookable"`
-	IsEvent                 bool      `json:"is_event"`
-	IsOnlinePrivate         bool      `json:"is_online_private"`
-	IsPromotionClient       bool      `json:"is_promotion_client"`
-	IsPromotionOnly         bool      `json:"is_promotion_only"`
-	IsPromotionStaff        bool      `json:"is_promotion_staff"`
-	IsSingleBuy             bool      `json:"is_single_buy"`
-	IsVirtual               bool      `json:"is_virtual"`
+	IsBookable              Bool      `json:"is_bookable"`
+	IsEvent                 Bool      `json:"is_event"`
+	IsOnlinePrivate         Bool      `json:"is_online_private"`
+	IsPromotionClient       Bool      `json:"is_promotion_client"`
+	IsPromotionOnly         Bool      `json:"is_promotion_only"`
+	IsPromotionStaff        Bool      `json:"is_promotion_staff"`
+	IsSingleBuy             Bool      `json:"is_single_buy"`
+	IsVirtual               Bool      `json:"is_virtual"`
 	ClassID                 string    `json:"k_class"`
 	Price                   *Currency `json:"m_price"`
-	ShowSpecialInstructions Integer   `json:"show_special_instructions"` // "1"
+	ShowSpecialInstructions Bool      `json:"show_special_instructions"` // "1"
 	Title                   string    `json:"text_title"`
 	XMLDescription          string    `json:"xml_description"`
 	XMLSpecialInstruction   string    `json:"xml_special_instruction"`
@@ -197,7 +197,7 @@ type ClassSchedule struct {
 	StartDate         Date      `json:"dl_start"`
 	DayOfWeek         Integer   `json:"i_day"` // 1 is Monday; 7 is Sunday.
 	DurationInMinutes Integer   `json:"i_duration"`
-	IsCancel          bool      `json:"is_cancel"`
+	IsCancel          Bool      `json:"is_cancel"`
 	ClassID           string    `json:"k_class"`
 	ClassPeriodID     string    `json:"k_class_period"`
 	LocationID        string    `json:"k_location"`
@@ -212,8 +212,8 @@ type ScheduleClassListResponse struct {
 
 	Calendar            StringToAnyMap         `json:"a_calendar"`
 	Sessions            []ScheduleClassSession `json:"a_session"`
-	IsTimezoneDifferent bool                   `json:"is_timezone_different"`
-	IsVirtualService    bool                   `json:"is_virtual_service"`
+	IsTimezoneDifferent Bool                   `json:"is_timezone_different"`
+	IsVirtualService    Bool                   `json:"is_virtual_service"`
 }
 
 type ScheduleClassSession struct {
@@ -222,7 +222,7 @@ type ScheduleClassSession struct {
 	LocalStartTime    DateTime `json:"dtl_date"` // "2024-02-23 19:15:00"
 	DayOfWeek         Integer  `json:"i_day"`
 	DurationInMinutes Integer  `json:"i_duration"`
-	IsCancel          Integer  `json:"is_cancel"` // "0"
+	IsCancel          Bool     `json:"is_cancel"` // "0"
 	ClassID           string   `json:"k_class"`
 	ClassPeriodID     string   `json:"k_class_period"`
 	LocationID        string   `json:"k_location"`
@@ -231,8 +231,8 @@ type ScheduleClassSession struct {
 	URLBook           string   `json:"url_book"`
 	Staff             []string `json:"a_staff"`
 	// TODO: "a_virtual_location": []
-	HideApplication bool     `json:"hide_application"`
-	IsVirtual       bool     `json:"is_virtual"`
+	HideApplication Bool     `json:"hide_application"`
+	IsVirtual       Bool     `json:"is_virtual"`
 	ClassTab        []string `json:"a_class_tab"`
 }
 
@@ -250,13 +250,13 @@ type ScheduleClassViewResponse struct {
 			Image struct {
 				Height  Integer `json:"i_height"`
 				Width   Integer `json:"i_width"`
-				IsEmpty bool    `json:"is_empty"`
-				IsOwn   bool    `json:"is_own"`
+				IsEmpty Bool    `json:"is_empty"`
+				IsOwn   Bool    `json:"is_own"`
 				URL     string  `json:"https://d12lnanyhdwsnh.cloudfront.net/1/kXI.png"`
 			} `json:"a_image"`
 			// TODO: "a_search_tag"
 			// TODO: "a_tag"
-			CanBook           bool     `json:"can_book"`
+			CanBook           Bool     `json:"can_book"`
 			GlobalDate        DateTime `json:"dt_date_global"`
 			LocalDate         DateTime `json:"dt_date_local"`
 			HTMLDenyReason    string   `json:"html_deny_reason"`
@@ -272,19 +272,19 @@ type ScheduleClassViewResponse struct {
 			WaitLimit         *Integer `json:"i_wait_limit"`
 			WaitSpot          Integer  `json:"i_wait_spot"`
 			DenyReasonID      Integer  `json:"id_deny_reason"`
-			IsAgePublic       Integer  `json:"is_age_public"`
-			IsBook            bool     `json:"is_book"`
-			IsCancel          bool     `json:"is_cancel"`
-			IsEvent           bool     `json:"is_event"`
-			IsPromotionOnly   bool     `json:"is_promotion_only"`
+			IsAgePublic       Bool     `json:"is_age_public"`
+			IsBook            Bool     `json:"is_book"`
+			IsCancel          Bool     `json:"is_cancel"`
+			IsEvent           Bool     `json:"is_event"`
+			IsPromotionOnly   Bool     `json:"is_promotion_only"`
 			VirtualProviderID *Integer `json:"id_virtual_provider"`
-			IsVirtual         bool     `json:"is_virtual"`
-			IsWait            bool     `json:"is_wait"`
-			IsWaitList        bool     `json:"is_wait_list"`
-			IsWaitListEnabled bool     `json:"is_wait_list_enabled"`
+			IsVirtual         Bool     `json:"is_virtual"`
+			IsWait            Bool     `json:"is_wait"`
+			IsWaitList        Bool     `json:"is_wait_list"`
+			IsWaitListEnabled Bool     `json:"is_wait_list_enabled"`
 			ClassID           string   `json:"k_class"`
 			Price             Currency `json:"m_price"`
-			HidePrice         bool     `json:"hide_price"`
+			HidePrice         Bool     `json:"hide_price"`
 			DurationString    string   `json:"s_duration"`
 			Title             string   `json:"s_title"`
 			RoomText          string   `json:"text_room"`
@@ -434,8 +434,8 @@ type LocationResponse struct {
 	HTMLDescriptionFull    string  `json:"html_description_full"`
 	HTMLDescriptionPreview string  `json:"html_description_preview"`
 	IndustryID             Integer `json:"id_industry"`
-	IsPhone                bool    `json:"is_phone"`
-	IsTopChoice            bool    `json:"is_top_choice"`
+	IsPhone                Bool    `json:"is_phone"`
+	IsTopChoice            Bool    `json:"is_top_choice"`
 	BusinessID             string  `json:"k_business"`
 	BusinessTypeID         string  `json:"k_business_type"`
 	TimezoneID             string  `json:"k_timezone"`
@@ -472,7 +472,7 @@ type AttendanceListResponse struct {
 	Capacity        Integer                 `json:"i_capacity"`
 	ClientCount     Integer                 `json:"i_client"`
 	WaitListLimit   Integer                 `json:"wait_list_limit"`
-	IsWaitListLimit bool                    `json:"is_wait_list_limit"`
+	IsWaitListLimit Bool                    `json:"is_wait_list_limit"`
 	LocationID      string                  `json:"k_location"`
 }
 
@@ -482,7 +482,7 @@ type AttendanceListPerson struct {
 		Height  Integer `json:"i_height"`
 		Width   Integer `json:"i_width"`
 		URL     string  `json:"s_url"`
-		IsEmpty bool    `json:"is_empty"`
+		IsEmpty Bool    `json:"is_empty"`
 	} `json:"a_photo"`
 	// TODO: "a_wait_confirm": [],
 	BookedDate           DateTime `json:"dt_book"`     // In UTC.
@@ -499,23 +499,23 @@ type AttendanceListPerson struct {
 	GenderID             *Integer `json:"id_gender"`
 	ProgramID            Integer  `json:"id_program"`
 	IDVisit              Integer  `json:"id_visit"` // TODO: Find a better name for this.
-	IsAttend             bool     `json:"is_attend"`
-	IsDeposit            bool     `json:"is_deposit"`
-	IsEarly              bool     `json:"is_early"`
-	IsFree               bool     `json:"is_free"`
-	IsHidden             bool     `json:"is_hidden"`
+	IsAttend             Bool     `json:"is_attend"`
+	IsDeposit            Bool     `json:"is_deposit"`
+	IsEarly              Bool     `json:"is_early"`
+	IsFree               Bool     `json:"is_free"`
+	IsHidden             Bool     `json:"is_hidden"`
 	PassProspectID       Integer  `json:"id_pass_prospect"`
-	IsPenalty            bool     `json:"is_penalty"`
-	IsPending            bool     `json:"is_pending"`
-	IsPromotion          bool     `json:"is_promotion"`
-	IsPromotionChange    *bool    `json:"is_promotion_change"`
-	IsRestrict           bool     `json:"is_restrict"`
-	IsTruancy            bool     `json:"is_truancy"`
-	IsUnpaid             bool     `json:"is_unpaid"`
-	IsVisit              bool     `json:"is_visit"`
-	IsWait               bool     `json:"is_wait"`
-	IsWaitConfirm        bool     `json:"is_wait_confirm"`
-	IsWaitPriority       Integer  `json:"is_wait_priority"`
+	IsPenalty            Bool     `json:"is_penalty"`
+	IsPending            Bool     `json:"is_pending"`
+	IsPromotion          Bool     `json:"is_promotion"`
+	IsPromotionChange    *Bool    `json:"is_promotion_change"`
+	IsRestrict           Bool     `json:"is_restrict"`
+	IsTruancy            Bool     `json:"is_truancy"`
+	IsUnpaid             Bool     `json:"is_unpaid"`
+	IsVisit              Bool     `json:"is_visit"`
+	IsWait               Bool     `json:"is_wait"`
+	IsWaitConfirm        Bool     `json:"is_wait_confirm"`
+	IsWaitPriority       Bool     `json:"is_wait_priority"`
 	LocationID           string   `json:"k_location"`
 	LoginPromotionID     *string  `json:"k_login_promotion"`
 	VisitID              string   `json:"k_visit"`
@@ -547,7 +547,7 @@ type AttendanceListPerson struct {
 	I                    Integer  `json:"i"` // Deprecated; use "i_order" instead.
 	Order                Integer  `json:"i_order"`
 	// TODO: "a_resource": [],
-	CanProfile bool `json:"can_profile"`
+	CanProfile Bool `json:"can_profile"`
 	// TODO: "a_wearable": [],
 	Icon struct {
 		ColorBackground string `json:"s_color_background"`

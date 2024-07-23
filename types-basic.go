@@ -7,6 +7,44 @@ import (
 	"time"
 )
 
+// Bool is a boolean, which could be represented as a bool, an integer, or a string.
+type Bool bool
+
+func (d *Bool) UnmarshalJSON(contents []byte) error {
+	{
+		var v bool
+		err := json.Unmarshal(contents, &v)
+		if err == nil {
+			*d = Bool(v)
+			return nil
+		}
+	}
+	{
+		var v int
+		err := json.Unmarshal(contents, &v)
+		if err == nil {
+			*d = Bool(v != 0)
+			return nil
+		}
+	}
+	{
+		var v string
+		err := json.Unmarshal(contents, &v)
+		if err == nil {
+			if v == "" {
+				return nil
+			}
+			f, err := strconv.ParseBool(v)
+			if err != nil {
+				return err
+			}
+			*d = Bool(f)
+			return nil
+		}
+	}
+	return fmt.Errorf("bool: could not parse: %q", contents)
+}
+
 // Date is a specific date.
 type Date struct {
 	time.Time
@@ -117,10 +155,10 @@ func (d *Float) UnmarshalJSON(contents []byte) error {
 			}
 		}
 	}
-	return fmt.Errorf("float: could not parse: %s", contents)
+	return fmt.Errorf("float: could not parse: %q", contents)
 }
 
-// Integer is an integer, which could be represented as an integer or a string string.
+// Integer is an integer, which could be represented as an integer or a string.
 type Integer int
 
 func (d *Integer) UnmarshalJSON(contents []byte) error {
@@ -147,5 +185,5 @@ func (d *Integer) UnmarshalJSON(contents []byte) error {
 			return nil
 		}
 	}
-	return fmt.Errorf("integer: could not parse: %s", contents)
+	return fmt.Errorf("integer: could not parse: %q", contents)
 }
