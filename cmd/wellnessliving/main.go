@@ -121,7 +121,7 @@ func main() {
 					os.Exit(1)
 				}
 				for _, location := range locationListResponse.LocationMap {
-					fmt.Printf("id=%s %s\n", location.LocationID, location.Title)
+					fmt.Printf("id=%d %s\n", location.LocationID, location.Title)
 				}
 			},
 		}
