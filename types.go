@@ -570,7 +570,7 @@ type StaffListResponse struct {
 			ServiceID Integer `json:"k_service"`
 			StaffPay  any     `json:"k_staff_pay"`
 		} `json:"a_staff_service"`
-		Order         Integer `json:"i_order"` // 0 means "not ordered".
+		Order         Integer `json:"i_order"`
 		IsAppointment Bool    `json:"is_appointment"`
 		IsClass       Bool    `json:"is_class"`
 		IsEvent       Bool    `json:"is_event"`
