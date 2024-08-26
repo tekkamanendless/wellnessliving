@@ -56,12 +56,12 @@ type EventListResponse struct {
 }
 
 type SearchTag struct {
-	SearchTagID string `json:"k_search_tag"`
-	Title       string `json:"text_title"`
+	SearchTagID Integer `json:"k_search_tag"`
+	Title       string  `json:"text_title"`
 }
 
 type Event struct {
-	ClassTab          []string        `json:"a_class_tab"`
+	ClassTab          []Integer       `json:"a_class_tab"`
 	Logo              Logo            `json:"a_logo"`
 	Schedule          []EventSchedule `json:"a_schedule"`
 	SearchTags        []SearchTag     `json:"a_search_tag"`
@@ -86,10 +86,10 @@ type Event struct {
 	IsPromotionOnly   Bool            `json:"is_promotion_only"`
 	IsProrate         Bool            `json:"is_prorate"`
 	IsVirtual         Bool            `json:"is_virtual"`
-	ClassID           string          `json:"k_class"`
-	ClassPeriodID     string          `json:"k_class_period"`
-	EnrollmentBlockID string          `json:"k_enrollment_block"`
-	LocationID        string          `json:"k_location"`
+	ClassID           Integer         `json:"k_class"`
+	ClassPeriodID     Integer         `json:"k_class_period"`
+	EnrollmentBlockID Integer         `json:"k_enrollment_block"`
+	LocationID        Integer         `json:"k_location"`
 	PriceTotal        Currency        `json:"m_price_total"`
 	PriceTotalEarly   *Currency       `json:"m_price_total_early"`
 	AgeRestrictText   string          `json:"text_age_restrict"`
@@ -99,10 +99,10 @@ type Event struct {
 }
 
 type Logo struct {
-	Business string `json:"k_business"`
-	Class    string `json:"k_class"`
-	Image    Image  `json:"a_image"`
-	IsOwn    Bool   `json:"is_own"`
+	Business Integer `json:"k_business"`
+	Class    Integer `json:"k_class"`
+	Image    Image   `json:"a_image"`
+	IsOwn    Bool    `json:"is_own"`
 
 	Height       Integer `json:"i_height"`
 	HeightSource Integer `json:"i_height_src"` // Not present if "a_image" is set.
@@ -135,8 +135,8 @@ type EventSchedule struct {
 	EndDate       Date               `json:"dl_end"`
 	StartDate     Date               `json:"dl_start"`
 	IsDay         Bool               `json:"is_day"`
-	ClassPeriodID string             `json:"k_class_period"`
-	LocationID    string             `json:"k_location"`
+	ClassPeriodID Integer            `json:"k_class_period"`
+	LocationID    Integer            `json:"k_location"`
 	LocationText  string             `json:"text_location"`
 	TimeText      string             `json:"text_time"`
 }
@@ -159,7 +159,7 @@ type ClassResponse struct {
 }
 
 type Class struct {
-	ClassTab []string `json:"a_class_tab"`
+	ClassTab []Integer `json:"a_class_tab"`
 	// TODO: "a_config": null,
 	Schedule   []ClassSchedule `json:"a_schedule"`
 	SearchTags []SearchTag     `json:"a_search_tag"`
@@ -178,7 +178,7 @@ type Class struct {
 	IsPromotionStaff        Bool      `json:"is_promotion_staff"`
 	IsSingleBuy             Bool      `json:"is_single_buy"`
 	IsVirtual               Bool      `json:"is_virtual"`
-	ClassID                 string    `json:"k_class"`
+	ClassID                 Integer   `json:"k_class"`
 	Price                   *Currency `json:"m_price"`
 	ShowSpecialInstructions Bool      `json:"show_special_instructions"` // "1"
 	Title                   string    `json:"text_title"`
@@ -198,9 +198,9 @@ type ClassSchedule struct {
 	DayOfWeek         Integer   `json:"i_day"` // 1 is Monday; 7 is Sunday.
 	DurationInMinutes Integer   `json:"i_duration"`
 	IsCancel          Bool      `json:"is_cancel"`
-	ClassID           string    `json:"k_class"`
-	ClassPeriodID     string    `json:"k_class_period"`
-	LocationID        string    `json:"k_location"`
+	ClassID           Integer   `json:"k_class"`
+	ClassPeriodID     Integer   `json:"k_class_period"`
+	LocationID        Integer   `json:"k_location"`
 	Price             Currency  `json:"m_price"`
 	TextTimeRange     string    `json:"text_time_range"` // 7:00pm - 9:00pm
 	TextTimeStart     string    `json:"text_time_start"` // 7:00pm
@@ -223,17 +223,17 @@ type ScheduleClassSession struct {
 	DayOfWeek         Integer  `json:"i_day"`
 	DurationInMinutes Integer  `json:"i_duration"`
 	IsCancel          Bool     `json:"is_cancel"` // "0"
-	ClassID           string   `json:"k_class"`
-	ClassPeriodID     string   `json:"k_class_period"`
-	LocationID        string   `json:"k_location"`
+	ClassID           Integer  `json:"k_class"`
+	ClassPeriodID     Integer  `json:"k_class_period"`
+	LocationID        Integer  `json:"k_location"`
 	Title             string   `json:"s_title"`
 	Timezone          string   `json:"text_timezone"` // "EDT"
 	URLBook           string   `json:"url_book"`
 	Staff             []string `json:"a_staff"`
 	// TODO: "a_virtual_location": []
-	HideApplication Bool     `json:"hide_application"`
-	IsVirtual       Bool     `json:"is_virtual"`
-	ClassTab        []string `json:"a_class_tab"`
+	HideApplication Bool      `json:"hide_application"`
+	IsVirtual       Bool      `json:"is_virtual"`
+	ClassTab        []Integer `json:"a_class_tab"`
 }
 
 // ScheduleClassViewResponse is the response from "/Wl/Schedule/ClassView/ClassView.json".
@@ -282,7 +282,7 @@ type ScheduleClassViewResponse struct {
 			IsWait            Bool     `json:"is_wait"`
 			IsWaitList        Bool     `json:"is_wait_list"`
 			IsWaitListEnabled Bool     `json:"is_wait_list_enabled"`
-			ClassID           string   `json:"k_class"`
+			ClassID           Integer  `json:"k_class"`
 			Price             Currency `json:"m_price"`
 			HidePrice         Bool     `json:"hide_price"`
 			DurationString    string   `json:"s_duration"`
@@ -292,14 +292,14 @@ type ScheduleClassViewResponse struct {
 			VirtualJoinURL    string   `json:"url_virtual_join"`
 		} `json:"a_class"`
 		Location struct {
-			Latitude   Float  `json:"f_latitude"`
-			Longitude  Float  `json:"f_longitude"`
-			Rate       Float  `json:"f_rate"`
-			LocationID string `json:"k_location"`
-			Address    string `json:"s_address"`
-			Map        string `json:"s_map"`
-			Phone      string `json:"s_phone"`
-			Title      string `json:"s_title"`
+			Latitude   Float   `json:"f_latitude"`
+			Longitude  Float   `json:"f_longitude"`
+			Rate       Float   `json:"f_rate"`
+			LocationID Integer `json:"k_location"`
+			Address    string  `json:"s_address"`
+			Map        string  `json:"s_map"`
+			Phone      string  `json:"s_phone"`
+			Title      string  `json:"s_title"`
 		} `json:"a_location"`
 		Staff []struct {
 			StaffID      Integer `json:"k_staff"`
@@ -312,7 +312,7 @@ type ScheduleClassViewResponse struct {
 		} `json:"a_staff"`
 		// TODO: "a_visits_required"
 		Date          DateTime `json:"dt_date"`
-		ClassPeriodID string   `json:"k_class_period"`
+		ClassPeriodID Integer  `json:"k_class_period"`
 	} `json:"a_session_result"`
 	// TODO: "a_staff"
 	// TODO: "a_visits_required"
@@ -346,11 +346,11 @@ type Location struct {
 	Latitude       Float   `json:"f_latitude"`
 	Longitude      Float   `json:"f_longitude"`
 	Order          Integer `json:"i_order"`
-	BusinessID     string  `json:"k_business"`
-	CountryID      string  `json:"k_country"`
-	LocationID     string  `json:"k_location"`
-	TimezoneID     string  `json:"k_timezone"`
-	RegionID       string  `json:"k_region"`
+	BusinessID     Integer `json:"k_business"`
+	CountryID      Integer `json:"k_country"`
+	LocationID     Integer `json:"k_location"`
+	TimezoneID     Integer `json:"k_timezone"`
+	RegionID       Integer `json:"k_region"`
 	URLLogo        string  `json:"url_logo"`
 	Shift          Integer `json:"i_shift"`
 	Title          string  `json:"s_title"`
@@ -436,9 +436,9 @@ type LocationResponse struct {
 	IndustryID             Integer `json:"id_industry"`
 	IsPhone                Bool    `json:"is_phone"`
 	IsTopChoice            Bool    `json:"is_top_choice"`
-	BusinessID             string  `json:"k_business"`
-	BusinessTypeID         string  `json:"k_business_type"`
-	TimezoneID             string  `json:"k_timezone"`
+	BusinessID             Integer `json:"k_business"`
+	BusinessTypeID         Integer `json:"k_business_type"`
+	TimezoneID             Integer `json:"k_timezone"`
 	Address                string  `json:"s_address"`
 	Map                    string  `json:"s_map"`
 	PhoneNumber            string  `json:"s_phone"`
@@ -466,6 +466,8 @@ type LocationResponse struct {
 }
 
 type AttendanceListResponse struct {
+	BaseResponse
+
 	ListActive      []*AttendanceListPerson `json:"a_list_active"`
 	ListConfirm     []*AttendanceListPerson `json:"a_list_confirm"`
 	ListWait        []*AttendanceListPerson `json:"a_list_wait"`
@@ -473,7 +475,7 @@ type AttendanceListResponse struct {
 	ClientCount     Integer                 `json:"i_client"`
 	WaitListLimit   Integer                 `json:"wait_list_limit"`
 	IsWaitListLimit Bool                    `json:"is_wait_list_limit"`
-	LocationID      string                  `json:"k_location"`
+	LocationID      Integer                 `json:"k_location"`
 }
 
 type AttendanceListPerson struct {
@@ -516,9 +518,9 @@ type AttendanceListPerson struct {
 	IsWait               Bool     `json:"is_wait"`
 	IsWaitConfirm        Bool     `json:"is_wait_confirm"`
 	IsWaitPriority       Bool     `json:"is_wait_priority"`
-	LocationID           string   `json:"k_location"`
-	LoginPromotionID     *string  `json:"k_login_promotion"`
-	VisitID              string   `json:"k_visit"`
+	LocationID           Integer  `json:"k_location"`
+	LoginPromotionID     *Integer `json:"k_login_promotion"`
+	VisitID              Integer  `json:"k_visit"`
 	Expire               string   `json:"s_expire"`
 	FirstName            string   `json:"s_firstname"` // Deprecated: use "text_firstname" instead.
 	LastName             string   `json:"s_lastname"`  // Deprecated: use "text_lastname" instead.
@@ -557,4 +559,72 @@ type AttendanceListPerson struct {
 		Title           string `json:"s_title"`
 		ShapeSID        string `json:"sid_shape"`
 	} `json:"icon"`
+}
+
+type StaffListResponse struct {
+	BaseResponse
+
+	StaffMap map[string]struct {
+		PayRate      []string `json:"a_pay_rate"`
+		StaffService []struct {
+			ServiceID Integer `json:"k_service"`
+			StaffPay  any     `json:"k_staff_pay"`
+		} `json:"a_staff_service"`
+		Order         Integer `json:"i_order"` // 0 means "not ordered".
+		IsAppointment Bool    `json:"is_appointment"`
+		IsClass       Bool    `json:"is_class"`
+		IsEvent       Bool    `json:"is_event"`
+		StaffID       Integer `json:"k_staff"`
+		Name          string  `json:"s_name"`  // First name.
+		Image         string  `json:"s_image"` // Always has some value.
+		NameHTML      string  `json:"html_name"`
+		Position      string  `json:"s_position"`
+		Surname       string  `json:"s_surname"` // Last name.
+		SurnameFull   string  `json:"s_surname_full"`
+		NameFull      string  `json:"text_name_full"` // Full name.
+		UID           string  `json:"uid"`
+		ImageURL      string  `json:"url_image"` // Only has the custom value.
+	} `json:"a_staff"` // Indexed by "k_staff"
+}
+
+type StaffViewResponse struct {
+	BaseResponse
+
+	// TODO: "a_class_day": []
+	ResultList map[string]struct {
+		// TODO: "a_class_day": []
+		Staff struct {
+			LocationWork []Integer `json:"a_location_work"`
+			Photo        map[string]struct {
+				IDGender     Integer `json:"id_gender"`
+				StaffID      Integer `json:"k_staff"`
+				Name         string  `json:"s_name"` // First name.
+				UID          Integer `json:"uid"`
+				LinkBusiness string  `json:"s_link_business"` // Some kind of internal identifier.
+				LinkWide     string  `json:"s_link_wide"`     // Some kind of internal identifier.
+				Height       Integer `json:"i_height"`
+				Width        Integer `json:"i_width"`
+				IsEmpty      Bool    `json:"is_empty"`
+				URL          string  `json:"s_url"`
+			} `json:"a_photo"` // Indexed by "k_staff" for some unknown reason.
+			BiographyHTML         string   `json:"html_biography"` // This is an HTML fragment.
+			FirstHTML             string   `json:"html_first"`     // First name.
+			LastHTML              string   `json:"html_last"`
+			LocationTitleHTML     string   `json:"html_location_title"`
+			IDGender              Integer  `json:"id_gender"`
+			IsClassesEvents       Bool     `json:"is_classes_events"`
+			IsPublishBusinessPage Bool     `json:"is_publish_business_page"` // True if this should be visible online.
+			IsScheduleEnabled     Bool     `json:"is_schedule_enabled"`
+			LocationID            *Integer `json:"k_location"`
+			StaffID               Integer  `json:"k_staff"`
+			Biography             string   `json:"s_biography"` // This is a whole HTML document, including "<!DOCTYPE html>".
+			Family                string   `json:"s_family"`    // Last name.
+			Name                  string   `json:"s_name"`      // First name.
+			Position              string   `json:"s_position"`
+			BusinessRole          string   `json:"text_business_role"`
+			FullName              string   `json:"text_full_name"`
+			UID                   Integer  `json:"uid"`
+			ScheduleURL           string   `json:"url_schedule"`
+		} `json:"a_staff"`
+	} `json:"a_result_list"` // Indexed by "k_staff"
 }
