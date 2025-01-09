@@ -628,3 +628,29 @@ type StaffViewResponse struct {
 		} `json:"a_staff"`
 	} `json:"a_result_list"` // Indexed by "k_staff"
 }
+
+type ClassesPromotionClassPromotionResponse struct {
+	Promotions []struct {
+		IsSelect Bool `json:"is_select"`
+		// TODO: "id_program": 1,
+		IsClass      Bool    `json:"is_class"`
+		IsEnrollment Bool    `json:"is_enrollment"`
+		PromotionID  Integer `json:"k_promotion"`
+		TextTitle    string  `json:"text_title"`
+	} `json:"a_promotion"`
+	// TODO: "k_promotion_default": null,
+}
+
+type MemberPurchaseMemberByPromotionResponse struct {
+	Clients []struct {
+		PurchaseOptions []struct {
+			EndDate          Date     `json:"dl_end"`
+			PurchaseDateTime DateTime `json:"dtu_purchase"`
+			StartDate        Date     `json:"dl_start"`
+			// TODO: "dl_terminate": null,
+			LoginPromotionID Integer `json:"k_login_promotion"`
+			PromotionID      Integer `json:"k_promotion"`
+		} `json:"a_purchase_options"`
+		UID Integer `json:"uid"`
+	} `json:"a_clients"`
+}
