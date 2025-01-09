@@ -654,3 +654,70 @@ type MemberPurchaseMemberByPromotionResponse struct {
 		UID Integer `json:"uid"`
 	} `json:"a_clients"`
 }
+
+type UserInfoUserInfoResponse struct {
+	/*
+		"a_member_group": [
+			"49478"
+		],
+		"a_photo": {
+			"i_height": 100,
+			"i_width": 100,
+			"url_photo": "https://us.wellnessliving.com/im/rs-undefined.png"
+		},
+		"a_result_list": {
+			"51299234": {
+				"a_member_group": [
+					"49478"
+				],
+				"a_photo": {
+				"i_height": 100,
+				"i_width": 100,
+				"url_photo": "https://us.wellnessliving.com/im/rs-undefined.png"
+				},
+				"dt_add": "2023-12-13 05:10:14",
+				"dt_birth": "",
+				"has_discount": false,
+				"id_gender": 3,
+				"is_customer_new": false,
+				"is_traveller": false,
+				"k_city": null,
+				"k_login_type": "1963346",
+				"s_first_name": "Jane",
+				"s_last_name": "Doe",
+				"s_mail": "REDACTED@gmail.com",
+				"s_member": null,
+				"s_phone": "+16108675309",
+				"s_phone_home": "",
+				"s_phone_work": "",
+				"text_address": "",
+				"text_city": "",
+				"text_login_type": "Unlimited Pass Holder",
+				"text_postal": "",
+				"uid": "51299234",
+				"url_photo": ""
+			}
+		},
+	*/
+	DateAdded DateTime `json:"dt_add"`
+	//TODO: BirthDate *Date `json:"dt_birth"`
+	HasDiscount   Bool    `json:"has_discount"`
+	GenderID      Integer `json:"id_gender"`
+	IsCustomerNew Bool    `json:"is_customer_new"`
+	IsTraveller   Bool    `json:"is_traveller"`
+	// TODO: "k_city": null,
+	LoginTypeID  Integer `json:"k_login_type"`
+	FirstName    string  `json:"s_first_name"`
+	LastName     string  `json:"s_last_name"`
+	EmailAddress string  `json:"s_mail"`
+	// TODO: "s_member": null,
+	PhoneNumber    string  `json:"s_phone"`
+	HomePhone      string  `json:"s_phone_home"`
+	WorkPhone      string  `json:"s_phone_work"`
+	AddressLine1   string  `json:"text_address"`
+	AddressCity    string  `json:"text_city"`
+	LoginType      string  `json:"text_login_type"`
+	AddressZipCode string  `json:"text_postal"`
+	UID            Integer `json:"uid"`
+	PhotoURL       string  `json:"url_photo"`
+}
