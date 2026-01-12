@@ -721,3 +721,38 @@ type UserInfoUserInfoResponse struct {
 	UID            Integer `json:"uid"`
 	PhotoURL       string  `json:"url_photo"`
 }
+
+type ReportData33Response struct {
+	BaseResponse
+	LogID string `json:"k_log"`
+
+	Totals map[string]struct {
+		IsProspect Bool    `json:"is_prospect"`
+		Title      string  `json:"s_title"`
+		Value      Integer `json:"s_value"`
+	} `json:"a_total"`
+
+	Data struct {
+		IsMore     bool `json:"is_more"` // This is true if there are more rows to fetch.
+		ColumnHide struct {
+			Rank bool `json:"s_rank"`
+		}
+		Rows []struct {
+			DataAPI struct {
+				FirstName string   `json:"s_firstname"`
+				LastName  string   `json:"s_lastname"`
+				Email     string   `json:"s_mail"`
+				Name      string   `json:"s_name"`
+				Groups    []string `json:"a_member_group"`
+				PhotoURL  string   `json:"url_photo"`
+			} `json:"a_data_api"`
+			SinceDate struct {
+				Date  DateTime `json:"dt_date"`
+				Class string   `json:"_s_class"`
+			} `json:"dt_since_local"`
+			Note   string  `json:"s_note"`
+			UID    Integer `json:"uid"`
+			Member string  `json:"member"`
+		} `json:"a_row"`
+	} `json:"a_data"`
+}
