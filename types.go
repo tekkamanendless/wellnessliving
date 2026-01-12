@@ -742,7 +742,7 @@ type ReportData33Response struct {
 				FirstName string   `json:"s_firstname"`
 				LastName  string   `json:"s_lastname"`
 				Email     string   `json:"s_mail"`
-				NameFull  string   `json:"s_name"`
+				Name      string   `json:"s_name"`
 				Groups    []string `json:"a_member_group"`
 				PhotoURL  string   `json:"url_photo"`
 			} `json:"a_data_api"`
