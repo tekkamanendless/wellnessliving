@@ -17,7 +17,7 @@ import (
 func main() {
 	ctx := context.Background()
 
-	client := wellnessliving.Client{}
+	client := wellnessliving.NewClient()
 
 	var verbose bool
 	var username string
