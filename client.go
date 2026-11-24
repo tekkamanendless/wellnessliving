@@ -4,21 +4,21 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"net/http"
 	"net/http/cookiejar"
-	"net/http/httputil"
 	"net/url"
 	"os"
 	"strings"
 	"time"
 
 	"github.com/sirupsen/logrus"
-	"github.com/tekkamanendless/httperror"
+	"github.com/tekkamanendless/restapiclient"
 	"golang.org/x/crypto/sha3"
 )
 
 // Client is the WellnessLiving client.
+//
+// This MUST be created using NewClient; it is not intended to be instantiated directly.
 //
 // At miniumum, you will need to set AuthorizationCode and AuthorizationID.
 // These values must be obtained by WellnessLiving as part of signing up for their API program.
@@ -29,10 +29,69 @@ import (
 //
 // If you wish to use the WellnessLiving staging API, then you will need to set URL, as well.
 type Client struct {
-	URL               string      // The base URL.  If empty, this will use the WellnessLiving production URL.
-	AuthorizationCode string      // This is your authorization code.  If not set, the value of WELLNESSLIVING_AUTHORIZATION_CODE will be used.
-	AuthorizationID   string      // This is your authorization ID.  If not set, the value of WELLNESSLIVING_AUTHORIZATION_CODE will be used.
-	HTTPClient        http.Client // This is the HTTP client.  It's available in case you need to make tweaks.
+	config     Config                // This is the configuration for the client.
+	restClient *restapiclient.Client // This is the REST client.  It is used to perform the actual requests.
+}
+
+// Config is the configuration for the client.
+type Config struct {
+	BaseURL           string       // The base URL.  If empty, this will use the WellnessLiving production URL.
+	AuthorizationCode string       // This is your authorization code.  If not set, the value of WELLNESSLIVING_AUTHORIZATION_CODE will be used.
+	AuthorizationID   string       // This is your authorization ID.  If not set, the value of WELLNESSLIVING_AUTHORIZATION_CODE will be used.
+	HTTPClient        *http.Client // This is the HTTP client.  It's available in case you need to make tweaks.
+}
+
+// Option is a function that can be used to configure the client.
+type Option func(*Config)
+
+// WithAuthorizationCode sets the authorization code for the client.
+func WithAuthorizationCode(authorizationCode string) Option {
+	return func(config *Config) {
+		config.AuthorizationCode = authorizationCode
+	}
+}
+
+// WithAuthorizationID sets the authorization ID for the client.
+func WithAuthorizationID(authorizationID string) Option {
+	return func(config *Config) {
+		config.AuthorizationID = authorizationID
+	}
+}
+
+// WithHTTPClient sets the HTTP client for the client.
+func WithHTTPClient(httpClient *http.Client) Option {
+	if httpClient == nil {
+		httpClient = &http.Client{}
+	}
+	return func(config *Config) {
+		config.HTTPClient = httpClient
+	}
+}
+
+// WithBaseURL sets the base URL for the client.
+func WithBaseURL(baseURL string) Option {
+	return func(config *Config) {
+		config.BaseURL = baseURL
+	}
+}
+
+// NewClient creates a new WellenssLiving client.
+func NewClient(options ...Option) *Client {
+	config := Config{
+		BaseURL:           "https://us.wellnessliving.com",
+		AuthorizationCode: os.Getenv("WELLNESSLIVING_AUTHORIZATION_CODE"),
+		AuthorizationID:   os.Getenv("WELLNESSLIVING_AUTHORIZATION_ID"),
+		HTTPClient:        &http.Client{},
+	}
+	for _, option := range options {
+		option(&config)
+	}
+	return &Client{
+		config: config,
+		restClient: restapiclient.New(config.BaseURL,
+			restapiclient.OptionHTTPClient(config.HTTPClient),
+		),
+	}
 }
 
 // Signature contains all of the pieces of information needed to compute the signature verification
@@ -61,7 +120,7 @@ func (c *Client) Login(ctx context.Context, username string, password string) er
 	if err != nil {
 		return fmt.Errorf("could not create cookie jar: %w", err)
 	}
-	c.HTTPClient.Jar = jar
+	c.config.HTTPClient.Jar = jar
 
 	var notepadResponse NotepadResponse
 	err = c.Request(ctx, http.MethodGet, "/Core/Passport/Login/Enter/Notepad.json", nil, nil, &notepadResponse)
@@ -106,7 +165,7 @@ func (c *Client) Login(ctx context.Context, username string, password string) er
 // variables is what WellnessLiving refers to as such.  These will be used as query parameters.
 // For requests that normally expect a body (such as POST), they will be converted to form values
 // and the encoding will be set appropriately.
-func (c *Client) Request(ctx context.Context, method string, path string, variables url.Values, input interface{}, output interface{}) error {
+func (c *Client) Request(ctx context.Context, method string, path string, variables url.Values, input any, output any) error {
 	var bodyString string
 	header := http.Header{}
 	if input == nil {
@@ -174,10 +233,7 @@ func (c *Client) Request(ctx context.Context, method string, path string, variab
 // * User-Agent
 // * Authorization
 func (c *Client) Raw(ctx context.Context, method string, path string, variables url.Values, bodyString string, header http.Header) ([]byte, error) {
-	baseURL := c.URL
-	if baseURL == "" {
-		baseURL = "https://us.wellnessliving.com"
-	}
+	baseURL := c.config.BaseURL
 
 	targetURL := path
 	if !strings.Contains(targetURL, "://") {
@@ -194,54 +250,30 @@ func (c *Client) Raw(ctx context.Context, method string, path string, variables 
 
 	method = strings.ToUpper(method)
 
-	var body io.Reader
-	if bodyString != "" {
-		body = strings.NewReader(bodyString)
-	}
-
-	request, err := http.NewRequest(method, targetURL, body)
-	if err != nil {
-		return nil, fmt.Errorf("wellnessliving: could not create request: %w", err)
-	}
-	for key, values := range header {
-		for _, value := range values {
-			request.Header.Add(key, value)
-		}
-	}
-
 	tz, err := time.LoadLocation("GMT")
 	if err != nil {
 		return nil, fmt.Errorf("wellnessliving: could not load timezone: %w", err)
 	}
 	now := time.Now().In(tz)
 
-	authorizationCode := c.AuthorizationCode
-	if authorizationCode == "" {
-		authorizationCode = os.Getenv("WELLNESSLIVING_AUTHORIZATION_CODE")
-	}
-	authorizationID := c.AuthorizationID
-	if authorizationID == "" {
-		authorizationID = os.Getenv("WELLNESSLIVING_AUTHORIZATION_ID")
-	}
-
 	signature := Signature{
 		Header:            http.Header{},
 		Variables:         variables,
 		Time:              now,
-		AuthorizationCode: authorizationCode,
+		AuthorizationCode: c.config.AuthorizationCode,
 		CookiePersistent:  "", // Default these to empty for now.
 		CookieTransient:   "", // Default these to empty for now.
 		Host:              myURL.Host,
-		AuthorizationID:   authorizationID,
+		AuthorizationID:   c.config.AuthorizationID,
 		Method:            strings.ToUpper(method),
 		Resource:          strings.TrimLeft(path, "/"),
 	}
-	if c.HTTPClient.Jar != nil {
+	if c.config.HTTPClient.Jar != nil {
 		cookieURL, err := url.Parse(targetURL)
 		if err != nil {
 			return nil, fmt.Errorf("could not parse URL for cookies: %w", err)
 		}
-		cookies := c.HTTPClient.Jar.Cookies(cookieURL)
+		cookies := c.config.HTTPClient.Jar.Cookies(cookieURL)
 		for _, cookie := range cookies {
 			switch cookie.Name {
 			case "p":
@@ -253,35 +285,29 @@ func (c *Client) Raw(ctx context.Context, method string, path string, variables 
 	}
 	authorization := computeAuthorizationHash(signature)
 
-	request.Header.Set("Accept", "*/*")
-	request.Header.Set("Date", now.Format(time.RFC1123))
-	request.Header.Set("User-Agent", "WellnessLiving SDK/1.1 (WellnessLiving SDK)")
-	request.Header.Set("Authorization", authorization)
+	header.Set("Accept", "*/*")
+	header.Set("Date", now.Format(time.RFC1123))
+	header.Set("User-Agent", "WellnessLiving SDK/1.1 (WellnessLiving SDK)")
+	header.Set("Authorization", authorization)
 	if bodyString != "" && bodyString[0] == '{' {
-		request.Header.Set("Content-Type", "application/json")
+		header.Set("Content-Type", "application/json")
 	}
 
-	{
-		contents, _ := httputil.DumpRequest(request, true)
-		logrus.WithContext(ctx).Debugf("REQUEST:\n%s\n", contents)
+	var requestOptions []restapiclient.Option
+	for key, values := range header {
+		for _, value := range values {
+			requestOptions = append(requestOptions, restapiclient.OptionHeader(key, value))
+		}
 	}
 
-	response, err := c.HTTPClient.Do(request)
+	var outputBytes restapiclient.RawBytes
+	err = c.restClient.Do(ctx, method, targetURL, bodyString, &outputBytes, requestOptions...)
 	if err != nil {
 		return nil, fmt.Errorf("wellnessliving: could not perform request: %w", err)
 	}
 
-	logrus.WithContext(ctx).Debugf("Status code: %d", response.StatusCode)
-	if response.StatusCode >= 400 {
-		return nil, httperror.ErrorFromStatus(response.StatusCode)
-	}
-
-	contents, err := io.ReadAll(response.Body)
-	if err != nil {
-		return nil, fmt.Errorf("wellnessliving: could not read response body: %w", err)
-	}
 	logrus.WithContext(ctx).Debugf("Response:")
-	logrus.WithContext(ctx).Debugf("%s", contents)
+	logrus.WithContext(ctx).Debugf("%s", outputBytes)
 
-	return contents, nil
+	return outputBytes, nil
 }
