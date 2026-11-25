@@ -60,13 +60,10 @@ func WithAuthorizationID(authorizationID string) Option {
 	}
 }
 
-// WithHTTPClient sets the HTTP client for the client.
-func WithHTTPClient(httpClient *http.Client) Option {
-	if httpClient == nil {
-		httpClient = &http.Client{}
-	}
+// WithBackOffOptions sets the backoff options for the client.
+func WithBackOffOptions(backOffOptions ...backoff.RetryOption) Option {
 	return func(config *Config) {
-		config.HTTPClient = httpClient
+		config.BackOffOptions = append(config.BackOffOptions, backOffOptions...)
 	}
 }
 
@@ -74,6 +71,16 @@ func WithHTTPClient(httpClient *http.Client) Option {
 func WithBaseURL(baseURL string) Option {
 	return func(config *Config) {
 		config.BaseURL = baseURL
+	}
+}
+
+// WithHTTPClient sets the HTTP client for the client.
+func WithHTTPClient(httpClient *http.Client) Option {
+	if httpClient == nil {
+		httpClient = &http.Client{}
+	}
+	return func(config *Config) {
+		config.HTTPClient = httpClient
 	}
 }
 
