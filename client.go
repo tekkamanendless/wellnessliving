@@ -11,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/cenkalti/backoff/v5"
 	"github.com/sirupsen/logrus"
 	"github.com/tekkamanendless/restapiclient"
 	"golang.org/x/crypto/sha3"
@@ -29,16 +30,17 @@ import (
 //
 // If you wish to use the WellnessLiving staging API, then you will need to set URL, as well.
 type Client struct {
-	config     Config                // This is the configuration for the client.
-	restClient *restapiclient.Client // This is the REST client.  It is used to perform the actual requests.
+	config     Config               // This is the configuration for the client.
+	restClient restapiclient.Client // This is the REST client.  It is used to perform the actual requests.
 }
 
 // Config is the configuration for the client.
 type Config struct {
-	BaseURL           string       // The base URL.  If empty, this will use the WellnessLiving production URL.
-	AuthorizationCode string       // This is your authorization code.  If not set, the value of WELLNESSLIVING_AUTHORIZATION_CODE will be used.
-	AuthorizationID   string       // This is your authorization ID.  If not set, the value of WELLNESSLIVING_AUTHORIZATION_CODE will be used.
-	HTTPClient        *http.Client // This is the HTTP client.  It's available in case you need to make tweaks.
+	BaseURL           string                // The base URL.  If empty, this will use the WellnessLiving production URL.
+	AuthorizationCode string                // This is your authorization code.  If not set, the value of WELLNESSLIVING_AUTHORIZATION_CODE will be used.
+	AuthorizationID   string                // This is your authorization ID.  If not set, the value of WELLNESSLIVING_AUTHORIZATION_CODE will be used.
+	HTTPClient        *http.Client          // This is the HTTP client.  It's available in case you need to make tweaks.
+	BackOffOptions    []backoff.RetryOption // This is the set of backoff options.  If not set, the default will be used.
 }
 
 // Option is a function that can be used to configure the client.
@@ -82,14 +84,18 @@ func NewClient(options ...Option) *Client {
 		AuthorizationCode: os.Getenv("WELLNESSLIVING_AUTHORIZATION_CODE"),
 		AuthorizationID:   os.Getenv("WELLNESSLIVING_AUTHORIZATION_ID"),
 		HTTPClient:        &http.Client{},
+		BackOffOptions:    nil,
 	}
 	for _, option := range options {
 		option(&config)
 	}
 	return &Client{
 		config: config,
-		restClient: restapiclient.New(config.BaseURL,
+		restClient: restapiclient.New(
+			restapiclient.OptionBaseURL(config.BaseURL),
 			restapiclient.OptionHTTPClient(config.HTTPClient),
+			restapiclient.OptionBackOffIsPermanentErrorFunction(restapiclient.DefaultBackOffIsPermanentErrorFunction),
+			restapiclient.OptionBackOffOptions(config.BackOffOptions...),
 		),
 	}
 }
